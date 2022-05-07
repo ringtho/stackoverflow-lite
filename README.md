@@ -1,3 +1,2 @@
-StackOverflow-lite Apllication
-
-The main app and UI pages will be pushed to this branch.
+# StackOverflow-lite
+StackOverflow-lite is a platform where people can ask questions and provide answers.
