@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, request
+from flask_jwt import JWT
+from security import authenticate, identity
 
 app = Flask(__name__)
+app.secret_key = 'sringtho'
+
+jwt = JWT(app, authenticate, identity)
 
 
 questions = [
