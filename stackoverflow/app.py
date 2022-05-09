@@ -13,12 +13,10 @@ questions = [
         }
 ]
 
-#get questions
 @app.route('/questions')
 def get_questions():
     return jsonify({"questions": questions})
 
-#post a question
 @app.route('/questions', methods=["POST"])
 def add_question():
     data = request.get_json()
@@ -35,7 +33,6 @@ def add_question():
     questions.append(new_question)
     return new_question, 201
 
-#get a particular question
 @app.route('/questions/<int:id>')
 def get_question(id):
     question = next(filter(lambda x: x['id'] == id, questions), None)
@@ -43,7 +40,6 @@ def get_question(id):
         return question
     return jsonify({"error" : "Question not found"}), 404
 
-#edit a particular question
 @app.route('/questions/<int:id>', methods=["PUT"])
 def edit_question(id):
     data = request.get_json()
@@ -53,7 +49,6 @@ def edit_question(id):
         return question
     return jsonify({"error" : "Question not found"})
 
-#delete a particular question
 @app.route('/questions/<int:id>', methods=["DELETE"])
 def delete_question(id):
     global questions
@@ -62,6 +57,24 @@ def delete_question(id):
         return jsonify({"error" : "Question not found"}), 404
     questions = list(filter(lambda x: x['id'] != id, questions))
     return jsonify({"message": "Question successfully deleted"})
+
+@app.route('/questions/<int:id>/answers', methods=["POST"])
+def add_answer(id):
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if question:
+        answer = {
+            "id": data['id'],
+            "answer": data['answer'],
+            "preferred": False
+        }
+        question['answers'].append(answer)
+        return question, 201
+    return jsonify({"error" : "Question not found"}), 404
+    
+
+
+
 
 
 
