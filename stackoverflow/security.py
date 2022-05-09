@@ -18,12 +18,3 @@ def identity(payload):
     user_id = payload['identity']
     return userid_mapping.get(user_id, None)
 
-
-{
-        "id": 1,
-        "username": "sringtho",
-        "email": "sringtho@gmail.com",
-        "full name": "Smith Ringtho",
-        "sex": "male",
-        "password": "abcdef"
-}
