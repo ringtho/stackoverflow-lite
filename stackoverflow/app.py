@@ -22,25 +22,36 @@ def get_questions():
 @app.route('/questions', methods=["POST"])
 def add_question():
     data = request.get_json()
-    question = {
+    question = next(filter(lambda x: x['id'] == data['id'], questions), None)
+    if question:
+        return jsonify({"error": f"The id {data['id']} already exists!"}), 400
+    new_question = {
         "id": data['id'],
         "question": data['question'],
         "description": data['description'],
         "stack": data['stack'],
         "answers": []
     }
-    qn = next(filter(lambda x: x['id'] == data['id'], questions), None)
-    if qn:
-        return jsonify({"error": f"The id {data['id']} already exists!"}), 400
-    questions.append(question)
-    return question, 201
-
-
-
+    questions.append(new_question)
+    return new_question, 201
 
 #get a particular question
+@app.route('/questions/<int:id>')
+def get_question(id):
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if question:
+        return question
+    return jsonify({"error" : "Question not found"}), 404
 
 #edit a particular question
+@app.route('/questions/<int:id>', methods=["PUT"])
+def edit_question(id):
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if question:
+        question.update(data)
+        return question
+    return jsonify({"error" : "Question not found"})
 
 #delete a particular question
 
