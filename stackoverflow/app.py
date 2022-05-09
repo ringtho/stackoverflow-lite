@@ -25,24 +25,24 @@ questions = [
         }
 ]
 
-@app.route('/auth/profile/<int:id>', methods=["PUT"])
-@jwt_required()
-def update_profile(id):
-    data = request.get_json()
-    user = next(filter(lambda x: x['id'] == id, users), None)
-    if user:
-        user.update(data)
-        return user
-    return jsonify({"error" : "User not found"})
+# @app.route('/auth/profile/<int:id>', methods=["PUT"])
+# @jwt_required()
+# def update_profile(id):
+#     data = request.get_json()
+#     user = next(filter(lambda x: x['id'] == id, users), None)
+#     if user:
+#         user.update(data)
+#         return user
+#     return jsonify({"error" : "User not found"})
 
 
-@app.route('/auth/profile/<int:id>')
-@jwt_required()
-def get_user_profile(id):
-    user = userid_mapping.get(id, None)
-    if user is None:
-        return jsonify({"error":"User not found!"}), 404
-    return user
+# @app.route('/auth/profile/<int:id>')
+# @jwt_required()
+# def get_user_profile(id):
+#     user = userid_mapping.get(id, None)
+#     if user is None:
+#         return jsonify({"error":"User not found!"}), 404
+#     return user
 
 
 @app.route('/auth/signup', methods=["POST"])
@@ -77,7 +77,7 @@ def get_questions():
     return jsonify({"questions": questions})
 
 @app.route('/questions', methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def add_question():
     data = request.get_json()
     question = next(filter(lambda x: x['id'] == data['id'], questions), None)
@@ -102,7 +102,7 @@ def get_question(id):
 
 
 @app.route('/questions/<int:id>', methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def edit_question(id):
     data = request.get_json()
     question = next(filter(lambda x: x['id'] == id, questions), None)
@@ -112,7 +112,7 @@ def edit_question(id):
     return jsonify({"error" : "Question not found"})
 
 @app.route('/questions/<int:id>', methods=["DELETE"])
-@jwt_required()
+# @jwt_required()
 def delete_question(id):
     global questions
     question = next(filter(lambda x: x['id'] == id, questions), None)
@@ -122,7 +122,7 @@ def delete_question(id):
     return jsonify({"message": "Question successfully deleted"})
 
 @app.route('/questions/<int:id>/answers', methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def add_answer(id):
     data = request.get_json()
     question = next(filter(lambda x: x['id'] == id, questions), None)
@@ -130,7 +130,8 @@ def add_answer(id):
         new_answer = {
             "id": data['id'],
             "answer": data['answer'],
-            "preferred": False
+            "preferred": False,
+            "comments": []
         }
         answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
         if answer:
@@ -140,7 +141,7 @@ def add_answer(id):
     return jsonify({"error" : "Question not found"}), 404
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def update_answer_as_preferred(id, answer_id):
     data = request.get_json()
     question = next(filter(lambda x: x['id'] == id, questions), None)
@@ -151,6 +152,21 @@ def update_answer_as_preferred(id, answer_id):
         return jsonify({"error" : "Answer not found"}), 404
     answer.update(data)
     return answer
+
+@app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
+# @jwt_required()
+def comment_on_answer(id, answer_id):
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if not question:
+        return jsonify({"error" : "Question not found"}), 404
+    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+    if not answer:
+        return jsonify({"error" : "Answer not found"}), 404
+    comment = {"id": data["id"], "comment": data["comment"]}
+    answer['comments'].append(comment)
+    return answer, 201
+
     
 
 
