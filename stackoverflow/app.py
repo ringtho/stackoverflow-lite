@@ -165,7 +165,7 @@ def comment_on_answer(id, answer_id):
         return jsonify({"error" : "Answer not found"}), 404
     comment = {"id": data["id"], "comment": data["comment"]}
     answer['comments'].append(comment)
-    return answer, 201
+    return comment, 201
 
     
 
