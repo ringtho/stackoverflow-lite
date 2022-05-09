@@ -63,18 +63,30 @@ def add_answer(id):
     data = request.get_json()
     question = next(filter(lambda x: x['id'] == id, questions), None)
     if question:
-        answer = {
+        new_answer = {
             "id": data['id'],
             "answer": data['answer'],
             "preferred": False
         }
-        question['answers'].append(answer)
+        answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
+        if answer:
+            return jsonify({"error": f"The id {data['id']} already exists!"}), 400
+        question['answers'].append(new_answer)
         return question, 201
     return jsonify({"error" : "Question not found"}), 404
+
+@app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
+def update_answer_as_preferred(id, answer_id):
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if not question:
+        return jsonify({"error" : "Question not found"}), 404
+    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+    if not answer:
+        return jsonify({"error" : "Answer not found"}), 404
+    answer.update(data)
+    return answer
     
-
-
-
 
 
 
