@@ -54,6 +54,16 @@ def edit_question(id):
     return jsonify({"error" : "Question not found"})
 
 #delete a particular question
+@app.route('/questions/<int:id>', methods=["DELETE"])
+def delete_question(id):
+    global questions
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if not question:
+        return jsonify({"error" : "Question not found"}), 404
+    questions = list(filter(lambda x: x['id'] != id, questions))
+    return jsonify({"message": "Question successfully deleted"})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
