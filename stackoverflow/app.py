@@ -1,7 +1,8 @@
 from datetime import timedelta
 from flask import Flask, jsonify, request
 from flask_jwt import JWT, jwt_required
-from security import authenticate, identity, users
+from security import authenticate, identity, users, userid_mapping
+
 
 
 app = Flask(__name__)
@@ -24,15 +25,52 @@ questions = [
         }
 ]
 
-# @app.route('/auth/profile/<int:id>', methods=["PUT"])
-# @jwt_required()
-# def update_profile(id):
-#     data = request.get_json()
-#     user = next(filter(lambda x: x['id'] == id, users), None)
-#     if user:
-#         user.update(data)
-#         return user
-#     return jsonify({"error" : "User not found"})
+@app.route('/auth/profile/<int:id>', methods=["PUT"])
+@jwt_required()
+def update_profile(id):
+    data = request.get_json()
+    user = next(filter(lambda x: x['id'] == id, users), None)
+    if user:
+        user.update(data)
+        return user
+    return jsonify({"error" : "User not found"})
+
+
+@app.route('/auth/profile/<int:id>')
+@jwt_required()
+def get_user_profile(id):
+    user = userid_mapping.get(id, None)
+    if user is None:
+        return jsonify({"error":"User not found!"}), 404
+    return user
+
+
+@app.route('/auth/signup', methods=["POST"])
+def signup():
+    data = request.get_json()
+    user = next(filter(lambda x: x['username'] == data['username'], users), None)
+    if user:
+        return jsonify(
+            {"error": f"A user with the username '{data['username']}' already exists"}
+            ), 400
+    user = next(filter(lambda x: x['email'] == data['email'], users), None)
+    if user:
+        return jsonify(
+            {"error": f"A user with the email '{data['email']}' already exists"}
+            ), 400
+    new_user = {
+        "id": data["id"],
+        "username": data["username"],
+        "email": data["email"],
+        "fullname": data["fullname"],
+        "sex": data["sex"],
+        "password": data["password"]
+    }
+    # new_user = User(data['id'],data['username'],data['email'],data['fullname'],data['sex'],data['password'])
+    users.append(new_user)
+    return new_user, 201
+
+
 
 @app.route('/questions')
 def get_questions():

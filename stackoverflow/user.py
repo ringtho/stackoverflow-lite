@@ -7,3 +7,5 @@ class User:
         self.fullname = fullname
         self.sex = sex
         self.password = password
+
+
