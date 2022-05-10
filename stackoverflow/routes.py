@@ -42,6 +42,7 @@ def signup():
 
 @app.route('/auth/login', methods=["POST"])
 def login():
+
     data = request.get_json()
     user = next(filter(lambda x: x['username'] == data['username'], users), None)
     if not user:
