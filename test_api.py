@@ -31,6 +31,5 @@ def test_post_question_no_token():
     res = json.loads(response.data.decode('utf-8'))
     assert type(res) is dict
     assert res['error'] == "Invalid token. Please provide a valid token"
-    # assert res.values() == "Invalid token. Please provide a valid token"
     assert response.status_code == 401
 
