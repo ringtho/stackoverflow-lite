@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from .auth_token import required_token, encode_token
+from .resources.auth_token import required_token, encode_token
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models.user import users, get_current_user
 from .models.question import questions

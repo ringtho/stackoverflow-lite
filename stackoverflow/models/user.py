@@ -1,4 +1,4 @@
-from ..auth_token import get_id_token
+from ..resources.auth_token import get_id_token
 class User:
     def __init__(self, _id, username, email, fullname, sex, password):
         self.id = _id

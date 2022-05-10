@@ -2,14 +2,12 @@ import pytest
 import json
 from app import app
 
-{
-    "id": 1,
-    "question": "Log in to use Flask",
-    "description": "I would like to use Flask for authentication purpose",
-    "stack":"Python, HTML, CSS",
-    "answers": []
+question = {
+    "id": 2,
+    "question": "Django Rest Framework",
+    "description": "Whenever I am logging in I get an error that affects my application",
+    "stack": "Django, Python"
 }
-
 
 def test_get_questions():
     response = app.test_client().get('/questions')
@@ -27,4 +25,12 @@ def test_get_single_question():
     assert res['id'] == 1
     assert res['question'] == "Log in to use Flask"
     assert response.status_code == 200
+
+def test_post_question_no_token():
+    response = app.test_client().post('/questions', json=question)
+    res = json.loads(response.data.decode('utf-8'))
+    assert type(res) is dict
+    assert res['error'] == "Invalid token. Please provide a valid token"
+    # assert res.values() == "Invalid token. Please provide a valid token"
+    assert response.status_code == 401
 
