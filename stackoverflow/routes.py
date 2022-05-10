@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import Flask, jsonify, request
 from flask_jwt import JWT, jwt_required
-from security import authenticate, identity, users, userid_mapping
+from stackoverflow.security import authenticate, identity, users, userid_mapping
 
 
 
@@ -22,8 +22,12 @@ questions = [
         "description": "I would like to use Flask for authentication purpose",
         "stack":"Python, HTML, CSS",
         "answers": []
-        }
+    }
 ]
+
+@app.route('/')
+def hello():
+    return jsonify({'hello': "Hello World"})
 
 # @app.route('/auth/profile/<int:id>', methods=["PUT"])
 # @jwt_required()
@@ -171,5 +175,3 @@ def comment_on_answer(id, answer_id):
 
 
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)

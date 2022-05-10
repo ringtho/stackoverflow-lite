@@ -1,4 +1,4 @@
-from user import User
+from stackoverflow.models.user import User
 
 users = [
     {
@@ -10,7 +10,6 @@ users = [
         "password": "abcdef"
     }
     
-
 ]
 
 username_mapping = {
