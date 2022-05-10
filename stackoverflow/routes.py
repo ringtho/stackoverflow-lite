@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from .auth_token import required_token, encode_token, get_id_token
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
-from .security import users
+from .models.user import users
 
 
 
@@ -157,51 +157,73 @@ def delete_question(id):
         return jsonify({"message": "Question successfully deleted"})
     return jsonify({"error": "You are unauthorized!"}), 401
 
-# @app.route('/questions/<int:id>/answers', methods=["POST"])
-# # @jwt_required()
-# def add_answer(id):
-#     data = request.get_json()
-#     question = next(filter(lambda x: x['id'] == id, questions), None)
-#     if question:
-#         new_answer = {
-#             "id": data['id'],
-#             "answer": data['answer'],
-#             "preferred": False,
-#             "comments": []
-#         }
-#         answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
-#         if answer:
-#             return jsonify({"error": f"The id {data['id']} already exists!"}), 400
-#         question['answers'].append(new_answer)
-#         return question, 201
-#     return jsonify({"error" : "Question not found"}), 404
+@app.route('/questions/<int:id>/answers', methods=["POST"])
+@required_token
+def add_answer(id):
+    current_user = get_current_user()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if question:
+        if current_user['username'] != question['author']:
+            new_answer = {
+                "id": data['id'],
+                "author": current_user['username'],
+                "answer": data['answer'],
+                "preferred": False,
+                "comments": []
+            }
+            answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
+            if answer:
+                return jsonify({"error": f"The id {data['id']} already exists!"}), 400
+            question['answers'].append(new_answer)
+            return question, 201
+        return jsonify({'error': "You are not allowed to answer your own question"})
+    return jsonify({"error" : "Question not found"}), 404
 
-# @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
-# # @jwt_required()
-# def update_answer_as_preferred(id, answer_id):
-#     data = request.get_json()
-#     question = next(filter(lambda x: x['id'] == id, questions), None)
-#     if not question:
-#         return jsonify({"error" : "Question not found"}), 404
-#     answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
-#     if not answer:
-#         return jsonify({"error" : "Answer not found"}), 404
-#     answer.update(data)
-#     return answer
+@app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
+@required_token
+def update_answer_as_preferred(id, answer_id):
+    current_user = get_current_user()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if not question:
+        return jsonify({"error" : "Question not found"}), 404
+    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+    if not answer:
+        return jsonify({"error" : "Answer not found"}), 404
+    if current_user['username'] == answer["author"]:
+        answer['answer'] = data['answer']
+        return answer
+    elif current_user['username'] == question["author"]:
+        answer['preferred'] = data['preferred']
+        return answer
+    else:
+        return jsonify({"error": "You are unauthorized!"}), 401
 
-# @app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
-# # @jwt_required()
-# def comment_on_answer(id, answer_id):
-#     data = request.get_json()
-#     question = next(filter(lambda x: x['id'] == id, questions), None)
-#     if not question:
-#         return jsonify({"error" : "Question not found"}), 404
-#     answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
-#     if not answer:
-#         return jsonify({"error" : "Answer not found"}), 404
-#     comment = {"id": data["id"], "comment": data["comment"]}
-#     answer['comments'].append(comment)
-#     return comment, 201
+@app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
+@required_token
+def comment_on_answer(id, answer_id):
+    current_user = get_current_user()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    data = request.get_json()
+    question = next(filter(lambda x: x['id'] == id, questions), None)
+    if not question:
+        return jsonify({"error" : "Question not found"}), 404
+    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+    if not answer:
+        return jsonify({"error" : "Answer not found"}), 404
+    comment = {
+        "id": data["id"],
+        "comment": data["comment"], 
+        "author": current_user['username']
+        }
+    answer['comments'].append(comment)
+    return comment, 201
 
     
 
