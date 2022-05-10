@@ -1,4 +1,4 @@
-
+from ..auth_token import get_id_token
 class User:
     def __init__(self, _id, username, email, fullname, sex, password):
         self.id = _id
@@ -7,6 +7,11 @@ class User:
         self.fullname = fullname
         self.sex = sex
         self.password = password
+
+def get_current_user():
+    user_id = get_id_token()
+    user = next(filter(lambda x: x['id'] == user_id, users), None)
+    return user
 
 
 users = [

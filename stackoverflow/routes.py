@@ -1,29 +1,13 @@
 from flask import Flask, jsonify, request
-from .auth_token import required_token, encode_token, get_id_token
-import uuid
+from .auth_token import required_token, encode_token
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models.user import users
+from .models.user import users, get_current_user
+from .models.question import questions
 
 
 
 app = Flask(__name__)
 
-
-questions = [
-    {
-        "id": 1,
-        "question": "Log in to use Flask",
-        "description": "I would like to use Flask for authentication purpose",
-        "stack":"Python, HTML, CSS",
-        "answers": [],
-        "author": "sringtho"
-    }
-]
-
-def get_current_user():
-    user_id = get_id_token()
-    user = next(filter(lambda x: x['id'] == user_id, users), None)
-    return user
 
 @app.route('/auth/signup', methods=["POST"])
 def signup():
@@ -46,8 +30,15 @@ def signup():
         "sex": data["sex"],
         "password": generate_password_hash(data["password"]) 
     }
+    display_user = {
+        "id": data["id"],
+        "username": data["username"],
+        "email": data["email"],
+        "fullname": data["fullname"],
+        "sex": data["sex"],
+    }
     users.append(new_user)
-    return new_user, 201
+    return display_user, 201
 
 @app.route('/auth/login', methods=["POST"])
 def login():
