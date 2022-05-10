@@ -1,18 +1,12 @@
-from datetime import timedelta
 from flask import Flask, jsonify, request
-from flask_jwt import JWT, jwt_required
-from stackoverflow.security import authenticate, identity, users, userid_mapping
+from .auth_token import required_token, encode_token, get_id_token
+import uuid
+from werkzeug.security import generate_password_hash, check_password_hash
+from .security import users
 
 
 
 app = Flask(__name__)
-app.secret_key = 'sringtho'
-
-app.config['JWT_AUTH_URL_RULE'] = '/auth/login'
-app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
-
-jwt = JWT(app, authenticate, identity)
-
 
 
 questions = [
@@ -25,29 +19,10 @@ questions = [
     }
 ]
 
-@app.route('/')
-def hello():
-    return jsonify({'hello': "Hello World"})
-
-# @app.route('/auth/profile/<int:id>', methods=["PUT"])
-# @jwt_required()
-# def update_profile(id):
-#     data = request.get_json()
-#     user = next(filter(lambda x: x['id'] == id, users), None)
-#     if user:
-#         user.update(data)
-#         return user
-#     return jsonify({"error" : "User not found"})
-
-
-# @app.route('/auth/profile/<int:id>')
-# @jwt_required()
-# def get_user_profile(id):
-#     user = userid_mapping.get(id, None)
-#     if user is None:
-#         return jsonify({"error":"User not found!"}), 404
-#     return user
-
+def get_current_user():
+    user_id = get_id_token()
+    user = next(filter(lambda x: x['id'] == user_id, users), None)
+    return user
 
 @app.route('/auth/signup', methods=["POST"])
 def signup():
@@ -68,108 +43,150 @@ def signup():
         "email": data["email"],
         "fullname": data["fullname"],
         "sex": data["sex"],
-        "password": data["password"]
+        "password": generate_password_hash(data["password"]) 
     }
-    # new_user = User(data['id'],data['username'],data['email'],data['fullname'],data['sex'],data['password'])
     users.append(new_user)
     return new_user, 201
 
-
-
-@app.route('/questions')
-def get_questions():
-    return jsonify({"questions": questions})
-
-@app.route('/questions', methods=["POST"])
-# @jwt_required()
-def add_question():
+@app.route('/auth/login', methods=["POST"])
+def login():
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == data['id'], questions), None)
-    if question:
-        return jsonify({"error": f"The id {data['id']} already exists!"}), 400
-    new_question = {
-        "id": data['id'],
-        "question": data['question'],
-        "description": data['description'],
-        "stack": data['stack'],
-        "answers": []
-    }
-    questions.append(new_question)
-    return new_question, 201
+    user = next(filter(lambda x: x['username'] == data['username'], users), None)
+    if not user:
+        return jsonify({"error" : "Invalid username"}), 404
+    password = check_password_hash(user.get("password"), data["password"])
+    if password:
+        token = encode_token(user['id'], user['username'])
+        return jsonify({
+            "access_token": token,
+            "user_id": user["id"],
+            "username": user["username"]
+        })
+    return jsonify({"error": "Incorrect password used"}), 400
 
-@app.route('/questions/<int:id>')
-def get_question(id):
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if question:
-        return question
-    return jsonify({"error" : "Question not found"}), 404
+@app.route('/auth/profile/<string:username>')
+@required_token
+def get_user_profile(username):
+    current_user = get_current_user()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    if current_user['username'] != username:
+        return jsonify({"error": "You are unauthorized!"}), 401
+    user = next(filter(lambda x: x['username'] == username, users), None)
+    if user is None:
+        return jsonify({"error":"User not found!"}), 404
+    return user
 
-
-@app.route('/questions/<int:id>', methods=["PUT"])
-# @jwt_required()
-def edit_question(id):
+@app.route('/auth/profile/<string:username>', methods=["PUT"])
+@required_token
+def update_profile(username):
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if question:
-        question.update(data)
-        return question
-    return jsonify({"error" : "Question not found"})
+    data["password"] = generate_password_hash(data['password'])
+    current_user = get_current_user()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    if current_user['username'] != username:
+        return jsonify({"error": "You are unauthorized!"}), 401
+    user = next(filter(lambda x: x['username'] == username, users), None)
+    if user:
+        user.update(data)
+        return user
+    return jsonify({"error" : "User not found"}), 404
 
-@app.route('/questions/<int:id>', methods=["DELETE"])
-# @jwt_required()
-def delete_question(id):
-    global questions
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if not question:
-        return jsonify({"error" : "Question not found"}), 404
-    questions = list(filter(lambda x: x['id'] != id, questions))
-    return jsonify({"message": "Question successfully deleted"})
+# @app.route('/questions')
+# def get_questions():
+#     return jsonify({"questions": questions})
 
-@app.route('/questions/<int:id>/answers', methods=["POST"])
-# @jwt_required()
-def add_answer(id):
-    data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if question:
-        new_answer = {
-            "id": data['id'],
-            "answer": data['answer'],
-            "preferred": False,
-            "comments": []
-        }
-        answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
-        if answer:
-            return jsonify({"error": f"The id {data['id']} already exists!"}), 400
-        question['answers'].append(new_answer)
-        return question, 201
-    return jsonify({"error" : "Question not found"}), 404
+# @app.route('/questions', methods=["POST"])
+# # @jwt_required()
+# def add_question():
+#     data = request.get_json()
+#     question = next(filter(lambda x: x['id'] == data['id'], questions), None)
+#     if question:
+#         return jsonify({"error": f"The id {data['id']} already exists!"}), 400
+#     new_question = {
+#         "id": data['id'],
+#         "question": data['question'],
+#         "description": data['description'],
+#         "stack": data['stack'],
+#         "answers": []
+#     }
+#     questions.append(new_question)
+#     return new_question, 201
 
-@app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
-# @jwt_required()
-def update_answer_as_preferred(id, answer_id):
-    data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if not question:
-        return jsonify({"error" : "Question not found"}), 404
-    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
-    if not answer:
-        return jsonify({"error" : "Answer not found"}), 404
-    answer.update(data)
-    return answer
+# @app.route('/questions/<int:id>')
+# def get_question(id):
+#     question = next(filter(lambda x: x['id'] == id, questions), None)
+#     if question:
+#         return question
+#     return jsonify({"error" : "Question not found"}), 404
 
-@app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
-# @jwt_required()
-def comment_on_answer(id, answer_id):
-    data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if not question:
-        return jsonify({"error" : "Question not found"}), 404
-    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
-    if not answer:
-        return jsonify({"error" : "Answer not found"}), 404
-    comment = {"id": data["id"], "comment": data["comment"]}
-    answer['comments'].append(comment)
-    return comment, 201
+
+# @app.route('/questions/<int:id>', methods=["PUT"])
+# # @jwt_required()
+# def edit_question(id):
+#     data = request.get_json()
+#     question = next(filter(lambda x: x['id'] == id, questions), None)
+#     if question:
+#         question.update(data)
+#         return question
+#     return jsonify({"error" : "Question not found"})
+
+# @app.route('/questions/<int:id>', methods=["DELETE"])
+# # @jwt_required()
+# def delete_question(id):
+#     global questions
+#     question = next(filter(lambda x: x['id'] == id, questions), None)
+#     if not question:
+#         return jsonify({"error" : "Question not found"}), 404
+#     questions = list(filter(lambda x: x['id'] != id, questions))
+#     return jsonify({"message": "Question successfully deleted"})
+
+# @app.route('/questions/<int:id>/answers', methods=["POST"])
+# # @jwt_required()
+# def add_answer(id):
+#     data = request.get_json()
+#     question = next(filter(lambda x: x['id'] == id, questions), None)
+#     if question:
+#         new_answer = {
+#             "id": data['id'],
+#             "answer": data['answer'],
+#             "preferred": False,
+#             "comments": []
+#         }
+#         answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
+#         if answer:
+#             return jsonify({"error": f"The id {data['id']} already exists!"}), 400
+#         question['answers'].append(new_answer)
+#         return question, 201
+#     return jsonify({"error" : "Question not found"}), 404
+
+# @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
+# # @jwt_required()
+# def update_answer_as_preferred(id, answer_id):
+#     data = request.get_json()
+#     question = next(filter(lambda x: x['id'] == id, questions), None)
+#     if not question:
+#         return jsonify({"error" : "Question not found"}), 404
+#     answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+#     if not answer:
+#         return jsonify({"error" : "Answer not found"}), 404
+#     answer.update(data)
+#     return answer
+
+# @app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
+# # @jwt_required()
+# def comment_on_answer(id, answer_id):
+#     data = request.get_json()
+#     question = next(filter(lambda x: x['id'] == id, questions), None)
+#     if not question:
+#         return jsonify({"error" : "Question not found"}), 404
+#     answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+#     if not answer:
+#         return jsonify({"error" : "Answer not found"}), 404
+#     comment = {"id": data["id"], "comment": data["comment"]}
+#     answer['comments'].append(comment)
+#     return comment, 201
 
     
 

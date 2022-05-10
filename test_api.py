@@ -11,14 +11,6 @@ from app import app
 }
 
 
-def test_index_route():
-    response = app.test_client().get('/')
-    res = json.loads(response.data.decode('utf-8')).get('hello')
-
-    assert response.status_code == 200
-    assert res == "Hello World"
-    assert type(res) is str
-
 def test_get_questions():
     response = app.test_client().get('/questions')
     res = json.loads(response.data.decode('utf-8')).get('questions')
