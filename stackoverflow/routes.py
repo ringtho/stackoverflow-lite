@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 from .resources.auth_token import required_token, encode_token
-from .resources.validator import QuestionValidator, UserValidator, LoginValidator
+from .resources.validator import (QuestionValidator, 
+UserValidator, LoginValidator, AnswerValidator)
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models.user import User
 from .models.question import Question
+from .models.answer import Answer
 
 
 
@@ -29,7 +31,6 @@ def signup():
             "user": display_user}), 201
     return jsonify({"error": validator.error}), 400
     
-
 @app.route('/auth/login', methods=["POST"])
 def login():
     data = request.get_json()
@@ -116,9 +117,12 @@ def add_question():
 def get_question(id):
     question = Question().get_question_by_id(id)
     if question:
-        return question
+        answers = Answer().get_answers_for_question(question['id'])
+        return jsonify({
+            "question": question,
+            "answers": answers
+            })
     return jsonify({"error" : "Question not found"}), 404
-
 
 @app.route('/questions/<int:id>', methods=["PUT"])
 @required_token
@@ -127,6 +131,9 @@ def edit_question(id):
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
+    validator = QuestionValidator(request)
+    if not validator.question_is_valid():
+        return jsonify({"error": validator.error}), 400
     record = Question().update_question(id,current_user['username'],
     data['title'],data['description'],data['stack'])
     if record > 0:
@@ -147,49 +154,73 @@ def delete_question(id):
 @app.route('/questions/<int:id>/answers', methods=["POST"])
 @required_token
 def add_answer(id):
-    current_user = get_current_user()
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
+    validator = AnswerValidator(request)
+    if not validator.answer_is_valid():
+        return jsonify({"error": validator.error}), 400
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if question:
-        if current_user['username'] != question['author']:
-            new_answer = {
-                "id": data['id'],
-                "author": current_user['username'],
-                "answer": data['answer'],
-                "preferred": False,
-                "comments": []
-            }
-            answer = next(filter(lambda x : x['id'] == data['id'], question['answers']),None)
-            if answer:
-                return jsonify({"error": f"The id {data['id']} already exists!"}), 400
-            question['answers'].append(new_answer)
-            return question, 201
-        return jsonify({'error': "You are not allowed to answer your own question"})
-    return jsonify({"error" : "Question not found"}), 404
+    question = Question().get_question_by_id(id)
+    if question is None:
+        return jsonify({"error" : "Question not found"}), 404
+    question_id = question['id']
+    if current_user['username'] != question['author']:
+        Answer().create_answer(question_id, data['answer'], 
+        False, current_user['username'])
+        new_answer = {
+            "question": question_id,
+            "author": current_user['username'],
+            "answer": data['answer'],
+            "preferred": False,
+        }
+        return jsonify({
+        "success":"Successfully provided an answer",
+        "data": new_answer
+        }), 201
+    return jsonify({'error': "You are not allowed to answer your own question"})
+    
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
 @required_token
 def update_answer_as_preferred(id, answer_id):
-    current_user = get_current_user()
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if not question:
+    question = Question().get_question_by_id(id)
+    if question is None:
         return jsonify({"error" : "Question not found"}), 404
-    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+    answer = Answer().get_answer_by_answer_id(id, answer_id)
     if not answer:
         return jsonify({"error" : "Answer not found"}), 404
-    if current_user['username'] == answer["author"]:
-        answer['answer'] = data['answer']
-        return answer
-    elif current_user['username'] == question["author"]:
-        answer['preferred'] = data['preferred']
-        return answer
-    else:
-        return jsonify({"error": "You are unauthorized!"}), 401
+    validator = AnswerValidator(request)
+    if not validator.edit_prefered_answer_is_valid():
+        return jsonify({"error": validator.error}), 400
+    new_answer = {
+                    "answer": answer["answer"],
+                    "preferred": data['preferred']
+                }
+    if question['author'] == current_user['username']:
+        current_preferred_answer = Answer().get_answers_with_true_preferred(id)
+        if not current_preferred_answer:
+            record = Answer().update_answer_preferred_option(id, 
+            answer_id, data['preferred'])
+            if record > 0:
+                return jsonify({
+                    "success": "Answer successfully updated",
+                    "answer": new_answer})
+            return jsonify({"error": "Answer not found!"}), 404
+        Answer().update_answer_preferred_option(id, 
+        current_preferred_answer['id'], False)
+        record = Answer().update_answer_preferred_option(id, 
+        answer_id, data['preferred'])
+        if record > 0:
+            return jsonify({
+                    "success": "Answer successfully updated",
+                    "answer": new_answer})
+    return jsonify({"error": "You are not authorized"}), 401
+    
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
 @required_token

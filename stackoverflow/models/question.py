@@ -39,7 +39,8 @@ class Question:
         question = cur.fetchone()
         cur.close()
         conn.close()
-        return question  
+        if question:
+            return question  
 
     def update_question(self,id,author,title,description,stack):
         conn = get_db_connection()
@@ -60,6 +61,7 @@ class Question:
         cur = conn.cursor()
         query = f"""
         DELETE FROM questions WHERE id='{id}' AND author='{author}'
+        CASCADE
         """
         cur.execute(query)
         rows = cur.rowcount
@@ -79,16 +81,3 @@ class Question:
         cur.close()
         conn.close()
         return question
-
-
-
-questions = [
-    {
-        "id": 1,
-        "question": "Log in to use Flask",
-        "description": "I would like to use Flask for authentication purpose",
-        "stack":"Python, HTML, CSS",
-        "answers": [],
-        "author": "sringtho"
-    }
-]

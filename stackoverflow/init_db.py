@@ -21,7 +21,7 @@ cur.execute('CREATE TABLE books (id serial PRIMARY KEY,'
                                  )
 cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
                                 'username varchar (150) UNIQUE NOT NULL,'
-                                'email varchar (150) NOT NULL,'
+                                'email varchar (150) UNIQUE NOT NULL,'
                                 'firstname varchar (150) NOT NULL,'
                                 'lastname varchar(150) NOT NULL,'
                                 'gender varchar (150),'
@@ -29,11 +29,19 @@ cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
                                 'created_on timestamp DEFAULT CURRENT_TIMESTAMP);'
                                 )
 cur.execute('CREATE TABLE IF NOT EXISTS questions (id serial PRIMARY KEY,'
-                                'title varchar (150) UNIQUE NOT NULL,'
-                                'description varchar (150),'
+                                'title varchar (150) NOT NULL,'
+                                'description text,'
                                 'stack varchar (150) NOT NULL,'
                                 'author varchar(150) REFERENCES users(username),'
                                 'created_on timestamp DEFAULT NOW());'
+                                )
+cur.execute('CREATE TABLE IF NOT EXISTS answers (id serial PRIMARY KEY,'
+                                'question_id INTEGER NOT NULL,'
+                                'answer text,'
+                                'preferred boolean NOT NULL,'
+                                'author varchar(150) NOT NULL,'
+                                'created_on timestamp DEFAULT NOW(),'
+                                'FOREIGN KEY (question_id) REFERENCES questions (id));'
                                 )
 
 conn.commit()

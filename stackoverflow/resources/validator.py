@@ -26,6 +26,45 @@ class QuestionValidator:
         assert isinstance(question["title"], str), ("Title must be of string type")
         assert isinstance(question["description"], str), ("Description must be of string type")
         assert isinstance(question['stack'], str), ("Stack must be of string type")
+
+class AnswerValidator:
+    def __init__(self, request):
+        self.request = request
+
+    def answer_is_valid(self):
+        try:
+            answer = self.request.get_json()
+            assert isinstance(answer, dict),'Ensure that the question is in json format'
+            self.ensure_no_empty_fields(answer)
+            self.ensure_valid_data_types(answer)
+            return True
+        except Exception as e:
+            self.error = str(e)
+            return False
+
+    def ensure_no_empty_fields(self,answer):
+        assert 'answer' in answer, "'answer' field not specified as the dictionary key"
+
+    def ensure_valid_data_types(self, answer):
+        assert isinstance(answer["answer"], str), ("Answer must be of string type")
+
+    def edit_prefered_answer_is_valid(self):
+        try:
+            answer = self.request.get_json()
+            assert isinstance(answer, dict),'Ensure that the question is in json format'
+            self.ensure_preferred_field_present(answer)
+            self.ensure_valid_preferred_type(answer)
+            return True
+        except Exception as e:
+            self.error = str(e)
+            return False
+
+    def ensure_preferred_field_present(self,answer):
+        assert 'preferred' in answer, "'preferred' field not specified as the dictionary key"
+
+    def ensure_valid_preferred_type(self, answer):
+        assert isinstance(answer["preferred"], bool), ("Preferred must be of boolean type")
+
      
 class UserValidator:
     def __init__(self, request):
