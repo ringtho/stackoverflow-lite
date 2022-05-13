@@ -2,8 +2,8 @@ from flask import Flask, jsonify, request
 from .resources.auth_token import required_token, encode_token
 from .resources.validator import QuestionValidator, UserValidator, LoginValidator
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models.user import User, users
-from .models.question import questions
+from .models.user import User
+from .models.question import Question
 
 
 
@@ -15,8 +15,8 @@ def signup():
     validator = UserValidator(request)
     if validator.validate_user_data():
         password = generate_password_hash(data['password'])
-        User().create_user(data['username'],data['email'],data['firstname'],data['lastname'],
-        data['gender'],password)
+        User().create_user(data['username'],data['email'],
+        data['firstname'],data['lastname'],data['gender'],password)
         display_user = {
             "username": data["username"],
             "email": data["email"],
@@ -24,7 +24,9 @@ def signup():
             "lastname": data["lastname"],
             "gender": data["gender"],
         }
-        return jsonify({"success":"User created successfully", "user": display_user}), 201
+        return jsonify({
+            "success":"User created successfully", 
+            "user": display_user}), 201
     return jsonify({"error": validator.error}), 400
     
 
@@ -72,7 +74,9 @@ def update_password(username):
         if not user:
             return jsonify({"error": "Incorrect old password!"}), 401
         if check_password_hash(user['password'], data['new_password']):
-            return jsonify({"error": "The new password cannot be the same as the old password"}), 401
+            return jsonify({
+                "error": "The new password cannot be the same as the old password"}
+                ), 401
         password = generate_password_hash(data['new_password'])
         record = User().update_user_password(username, password)
         if record > 0:
@@ -82,7 +86,10 @@ def update_password(username):
 
 @app.route('/questions')
 def get_questions():
-    return jsonify({"questions": questions})
+    questions = Question().get_questions()
+    if questions:
+        return jsonify({"questions": questions})
+    return jsonify({"error": "No questions currently in the database"}), 404
 
 @app.route('/questions', methods=["POST"])
 @required_token
