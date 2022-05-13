@@ -28,6 +28,13 @@ cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
                                 'password varchar (150) NOT NULL,'
                                 'created_on timestamp DEFAULT CURRENT_TIMESTAMP);'
                                 )
+cur.execute('CREATE TABLE IF NOT EXISTS questions (id serial PRIMARY KEY,'
+                                'title varchar (150) UNIQUE NOT NULL,'
+                                'description varchar (150),'
+                                'stack varchar (150) NOT NULL,'
+                                'author varchar(150) REFERENCES users(username),'
+                                'created_on timestamp DEFAULT NOW());'
+                                )
 
 conn.commit()
 
