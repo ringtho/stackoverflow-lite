@@ -1,12 +1,49 @@
 from flask import Flask, jsonify, request
 from .resources.auth_token import required_token, encode_token
+from .resources.validator import QuestionValidator, UserValidator, LoginValidator
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models.user import users, get_current_user
 from .models.question import questions
-
+from .init_db import get_db_connection
+from psycopg2.extras import RealDictCursor
 
 
 app = Flask(__name__)
+
+
+
+
+@app.route('/books')
+def books():
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    query = "SELECT * FROM books"
+    cur.execute(query)
+    results = cur.fetchall()
+    cur.close()
+    conn.close()
+    if results:
+        return jsonify({"books": results})
+    return jsonify({"error": "Books not found"}), 400
+
+@app.route('/books', methods=['POST'])
+def postBooks():
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    data = request.get_json()
+    query = 'INSERT INTO books (title, author, pages_num, review) VALUES (%s, %s, %s, %s)'
+    cur.execute(query, (data['title'], data['author'], data['pages_num'], data['review']))
+    book = {
+        "title": data["title"],
+        "author": data["author"],
+        "pages_num": data["pages_num"],
+        "review": data["review"]
+    }
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"success": "Book successfully created", "book": book}), 201
+
 
 
 @app.route('/auth/signup', methods=["POST"])
@@ -22,28 +59,37 @@ def signup():
         return jsonify(
             {"error": f"A user with the email '{data['email']}' already exists"}
             ), 400
-    new_user = {
-        "id": data["id"],
-        "username": data["username"],
-        "email": data["email"],
-        "fullname": data["fullname"],
-        "sex": data["sex"],
-        "password": generate_password_hash(data["password"]) 
-    }
-    display_user = {
-        "id": data["id"],
-        "username": data["username"],
-        "email": data["email"],
-        "fullname": data["fullname"],
-        "sex": data["sex"],
-    }
-    users.append(new_user)
-    return display_user, 201
+    validator = UserValidator(request)
+    if validator.validate_user_data():
+        new_user = {
+            "id": data["id"],
+            "username": data["username"],
+            "email": data["email"],
+            "firstname": data["firstname"],
+            "lastname": data["firstname"],
+            "gender": data["gender"],
+            "password": generate_password_hash(data["password"]) 
+        }
+        display_user = {
+            "id": data["id"],
+            "username": data["username"],
+            "email": data["email"],
+            "firstname": data["firstname"],
+            "lastname": data["lastname"],
+            "gender": data["gender"],
+        }
+        
+        users.append(new_user)
+        return display_user, 201
+    return jsonify({"error": validator.error}), 400
+    
 
 @app.route('/auth/login', methods=["POST"])
 def login():
-
     data = request.get_json()
+    validator = LoginValidator(request)
+    if not validator.validate_login_data():
+        return jsonify({"error": validator.error}), 400
     user = next(filter(lambda x: x['username'] == data['username'], users), None)
     if not user:
         return jsonify({"error" : "Invalid username"}), 404
@@ -100,16 +146,19 @@ def add_question():
     question = next(filter(lambda x: x['id'] == data['id'], questions), None)
     if question:
         return jsonify({"error": f"The id {data['id']} already exists!"}), 400
-    new_question = {
-        "id": data['id'],
-        "question": data['question'],
-        "description": data['description'],
-        "stack": data['stack'],
-        "answers": [],
-        "author": current_user['username']
-    }
-    questions.append(new_question)
-    return new_question, 201
+    validator = QuestionValidator(request)
+    if validator.question_is_valid():
+        new_question = {
+            "id": data['id'],
+            "title": data['title'],
+            "description": data['description'],
+            "stack": data['stack'],
+            "answers": [],
+            "author": current_user['username']
+        }
+        questions.append(new_question)
+        return new_question, 201
+    return jsonify({"error": validator.error}), 400
 
 @app.route('/questions/<int:id>')
 def get_question(id):
