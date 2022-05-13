@@ -94,25 +94,22 @@ def get_questions():
 @app.route('/questions', methods=["POST"])
 @required_token
 def add_question():
-    current_user = get_current_user()
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == data['id'], questions), None)
-    if question:
-        return jsonify({"error": f"The id {data['id']} already exists!"}), 400
     validator = QuestionValidator(request)
     if validator.question_is_valid():
+        Question().create_question(data['title'],data['description'],
+        data['stack'], current_user['username'])
         new_question = {
-            "id": data['id'],
             "title": data['title'],
             "description": data['description'],
             "stack": data['stack'],
-            "answers": [],
             "author": current_user['username']
         }
-        questions.append(new_question)
-        return new_question, 201
+        return jsonify({"success":"Successfully created a new question",
+        "data": new_question}), 201
     return jsonify({"error": validator.error}), 400
 
 @app.route('/questions/<int:id>')
