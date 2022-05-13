@@ -43,6 +43,13 @@ cur.execute('CREATE TABLE IF NOT EXISTS answers (id serial PRIMARY KEY,'
                                 'created_on timestamp DEFAULT NOW(),'
                                 'FOREIGN KEY (question_id) REFERENCES questions (id));'
                                 )
+cur.execute('CREATE TABLE IF NOT EXISTS comments (id serial PRIMARY KEY,'
+                                'answer_id INTEGER NOT NULL,'
+                                'comment text,'
+                                'author varchar(150) NOT NULL,'
+                                'created_on timestamp DEFAULT NOW(),'
+                                'FOREIGN KEY (answer_id) REFERENCES answers (id));'
+                                )
 
 conn.commit()
 

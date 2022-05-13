@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, request
 from .resources.auth_token import required_token, encode_token
 from .resources.validator import (QuestionValidator, 
-UserValidator, LoginValidator, AnswerValidator)
+UserValidator, LoginValidator, AnswerValidator, CommentValidator)
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models.user import User
 from .models.question import Question
 from .models.answer import Answer
+from .models.comment import Comment
 
 
 
@@ -157,13 +158,13 @@ def add_answer(id):
     current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
-    validator = AnswerValidator(request)
-    if not validator.answer_is_valid():
-        return jsonify({"error": validator.error}), 400
     data = request.get_json()
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
+    validator = AnswerValidator(request)
+    if not validator.answer_is_valid():
+        return jsonify({"error": validator.error}), 400
     question_id = question['id']
     if current_user['username'] != question['author']:
         Answer().create_answer(question_id, data['answer'], 
@@ -224,23 +225,29 @@ def update_answer_as_preferred(id, answer_id):
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
 @required_token
-def comment_on_answer(id, answer_id):
-    current_user = get_current_user()
+def create_comment_on_answer(id, answer_id):
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if not question:
+    question = Question().get_question_by_id(id)
+    if question is None:
         return jsonify({"error" : "Question not found"}), 404
-    answer = next(filter(lambda x : x['id'] == answer_id, question['answers']),None)
+    answer = Answer().get_answer_by_answer_id(id, answer_id)
     if not answer:
         return jsonify({"error" : "Answer not found"}), 404
+    validator = CommentValidator(request)
+    if not validator.comment_is_valid():
+        return jsonify({"error": validator.error}), 400
+    Comment().create_comment(answer_id, data['comment'], current_user['username'])
     comment = {
-        "id": data["id"],
-        "comment": data["comment"], 
-        "author": current_user['username']
+        "answer": answer,
+        "comment": [
+            {
+                "comment": data["comment"], 
+                "author": current_user['username']
+            }]
         }
-    answer['comments'].append(comment)
     return comment, 201
 
     

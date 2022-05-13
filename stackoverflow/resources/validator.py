@@ -65,6 +65,26 @@ class AnswerValidator:
     def ensure_valid_preferred_type(self, answer):
         assert isinstance(answer["preferred"], bool), ("Preferred must be of boolean type")
 
+class CommentValidator:
+    def __init__(self, request):
+        self.request = request
+
+    def comment_is_valid(self):
+        try:
+            comment = self.request.get_json()
+            assert isinstance(comment, dict),'Ensure that the question is in json format'
+            self.ensure_no_empty_fields(comment)
+            self.ensure_valid_data_types(comment)
+            return True
+        except Exception as e:
+            self.error = str(e)
+            return False
+
+    def ensure_no_empty_fields(self,comment):
+        assert 'comment' in comment, "'comment' field not specified as the dictionary key"
+
+    def ensure_valid_data_types(self, comment):
+        assert isinstance(comment["comment"], str), ("Comment must be of string type")
      
 class UserValidator:
     def __init__(self, request):
