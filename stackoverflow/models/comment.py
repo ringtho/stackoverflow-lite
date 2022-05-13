@@ -15,3 +15,15 @@ class Comment:
         cur.close()
         conn.close()
         return comment
+
+    def get_comments_by_answer_id(self,answer_id):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = f"""
+        SELECT * FROM comments WHERE answer_id='{answer_id}'
+        """
+        cur.execute(query)
+        comments = cur.fetchall()
+        cur.close()
+        conn.close()
+        return comments

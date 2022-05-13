@@ -180,7 +180,38 @@ def add_answer(id):
         "data": new_answer
         }), 201
     return jsonify({'error': "You are not allowed to answer your own question"})
-    
+
+@app.route('/questions/<int:id>/answers/<int:answer_id>')
+@required_token
+def get_answer(id, answer_id):
+    current_user = User().get_current_user_from_token()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    question = Question().get_question_by_id(id)
+    if question is None:
+        return jsonify({"error" : "Question not found"}), 404
+    answer = Answer().get_answer_by_answer_id(id, answer_id)
+    if not answer:
+        return jsonify({"error" : "Answer not found"}), 404
+    comments = Comment().get_comments_by_answer_id(answer_id)
+    return jsonify({"answer": answer, "comments": comments})
+
+@app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["DELETE"])
+@required_token
+def delete_answer(id,answer_id):
+    current_user = User().get_current_user_from_token()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    question = Question().get_question_by_id(id)
+    if question is None:
+        return jsonify({"error" : "Question not found"}), 404
+    # answer = Answer().get_answer_by_answer_id(id, answer_id)
+    # if not answer:
+    #     return jsonify({"error" : "Answer not found"}), 404
+    response = Answer().delete_answer_by_id(answer_id, current_user['username'])
+    if response:
+        return jsonify({"message": "Answer successfully deleted"})
+    return jsonify({"error" : "Answer not found"}), 404
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
 @required_token

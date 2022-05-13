@@ -61,7 +61,6 @@ class Question:
         cur = conn.cursor()
         query = f"""
         DELETE FROM questions WHERE id='{id}' AND author='{author}'
-        CASCADE
         """
         cur.execute(query)
         rows = cur.rowcount

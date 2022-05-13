@@ -11,14 +11,6 @@ conn = psycopg2.connect(
 
 cur = conn.cursor()
 
-cur.execute('DROP TABLE IF EXISTS books;')
-cur.execute('CREATE TABLE books (id serial PRIMARY KEY,'
-                                 'title varchar (150) NOT NULL,'
-                                 'author varchar (50) NOT NULL,'
-                                 'pages_num integer NOT NULL,'
-                                 'review text,'
-                                 'date_added date DEFAULT CURRENT_TIMESTAMP);'
-                                 )
 cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
                                 'username varchar (150) UNIQUE NOT NULL,'
                                 'email varchar (150) UNIQUE NOT NULL,'
@@ -32,8 +24,10 @@ cur.execute('CREATE TABLE IF NOT EXISTS questions (id serial PRIMARY KEY,'
                                 'title varchar (150) NOT NULL,'
                                 'description text,'
                                 'stack varchar (150) NOT NULL,'
-                                'author varchar(150) REFERENCES users(username),'
-                                'created_on timestamp DEFAULT NOW());'
+                                'author varchar(150) NOT NULL,'
+                                'created_on timestamp DEFAULT NOW(),'
+                                'FOREIGN KEY (author) REFERENCES users (username)'
+                                'ON DELETE CASCADE);'
                                 )
 cur.execute('CREATE TABLE IF NOT EXISTS answers (id serial PRIMARY KEY,'
                                 'question_id INTEGER NOT NULL,'
@@ -41,14 +35,16 @@ cur.execute('CREATE TABLE IF NOT EXISTS answers (id serial PRIMARY KEY,'
                                 'preferred boolean NOT NULL,'
                                 'author varchar(150) NOT NULL,'
                                 'created_on timestamp DEFAULT NOW(),'
-                                'FOREIGN KEY (question_id) REFERENCES questions (id));'
+                                'FOREIGN KEY (question_id) REFERENCES questions (id)'
+                                'ON DELETE CASCADE);'
                                 )
 cur.execute('CREATE TABLE IF NOT EXISTS comments (id serial PRIMARY KEY,'
                                 'answer_id INTEGER NOT NULL,'
                                 'comment text,'
                                 'author varchar(150) NOT NULL,'
                                 'created_on timestamp DEFAULT NOW(),'
-                                'FOREIGN KEY (answer_id) REFERENCES answers (id));'
+                                'FOREIGN KEY (answer_id) REFERENCES answers (id)'
+                                'ON DELETE CASCADE);'
                                 )
 
 conn.commit()

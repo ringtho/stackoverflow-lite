@@ -70,3 +70,16 @@ class Answer:
         cur.close()
         conn.close()
         return rows
+
+    def delete_answer_by_id(self, answer_id, author):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        query = f"""
+        DELETE FROM answers WHERE id='{answer_id}' AND author='{author}'
+        """
+        cur.execute(query)
+        rows = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        return rows
