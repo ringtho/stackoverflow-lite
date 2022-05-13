@@ -39,19 +39,7 @@ class Question:
         question = cur.fetchone()
         cur.close()
         conn.close()
-        return question
-    
-    def get_questions_by_author(self, id, author):
-        conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        query = f"""
-        SELECT * FROM questions WHERE author='{author}'
-        """
-        cur.execute(query)
-        question = cur.fetchall()
-        cur.close()
-        conn.close()
-        return question
+        return question  
 
     def update_question(self,id,author,title,description,stack):
         conn = get_db_connection()
@@ -66,6 +54,31 @@ class Question:
         cur.close()
         conn.close()
         return rows
+
+    def delete_question_by_id(self, id, author):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        query = f"""
+        DELETE FROM questions WHERE id='{id}' AND author='{author}'
+        """
+        cur.execute(query)
+        rows = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        return rows
+
+    def get_questions_by_author(self, id, author):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = f"""
+        SELECT * FROM questions WHERE author='{author}'
+        """
+        cur.execute(query)
+        question = cur.fetchall()
+        cur.close()
+        conn.close()
+        return question
 
 
 

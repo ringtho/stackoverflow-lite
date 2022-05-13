@@ -27,7 +27,7 @@ class User:
         user = cur.fetchone()
         cur.close()
         conn.close()
-        if check_password_hash(user['password'], password):
+        if user and check_password_hash(user['password'], password):
             return user
 
     def get_user(self, username):

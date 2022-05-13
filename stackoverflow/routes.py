@@ -136,17 +136,13 @@ def edit_question(id):
 @app.route('/questions/<int:id>', methods=["DELETE"])
 @required_token
 def delete_question(id):
-    current_user = get_current_user()
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
-    global questions
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if not question:
-        return jsonify({"error" : "Question not found"}), 404
-    if current_user['username'] == question['author']:
-        questions = list(filter(lambda x: x['id'] != id, questions))
+    question = Question().delete_question_by_id(id, current_user['username'])
+    if question:
         return jsonify({"message": "Question successfully deleted"})
-    return jsonify({"error": "You are unauthorized!"}), 401
+    return jsonify({"error" : "Question not found"}), 404
 
 @app.route('/questions/<int:id>/answers', methods=["POST"])
 @required_token
