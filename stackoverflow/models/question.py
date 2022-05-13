@@ -15,6 +15,18 @@ class Question:
         conn.close()
         return questions
 
+    def get_question(self, id):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        query = f"""
+        SELECT * FROM questions WHERE id='{id}'
+        """
+        cur.execute(query)
+        question = cur.fetchone()
+        cur.close()
+        conn.close()
+        return question
+
 questions = [
     {
         "id": 1,

@@ -117,7 +117,7 @@ def add_question():
 
 @app.route('/questions/<int:id>')
 def get_question(id):
-    question = next(filter(lambda x: x['id'] == id, questions), None)
+    question = Question().get_question(id)
     if question:
         return question
     return jsonify({"error" : "Question not found"}), 404
