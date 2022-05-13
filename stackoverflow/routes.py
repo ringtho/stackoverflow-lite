@@ -2,49 +2,12 @@ from flask import Flask, jsonify, request
 from .resources.auth_token import required_token, encode_token
 from .resources.validator import QuestionValidator, UserValidator, LoginValidator
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models.user import User, users, get_current_user
+from .models.user import User, users
 from .models.question import questions
-from .init_db import get_db_connection
-from psycopg2.extras import RealDictCursor
+
 
 
 app = Flask(__name__)
-
-
-
-
-@app.route('/books')
-def books():
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    query = "SELECT * FROM books"
-    cur.execute(query)
-    results = cur.fetchall()
-    cur.close()
-    conn.close()
-    if results:
-        return jsonify({"books": results})
-    return jsonify({"error": "Books not found"}), 400
-
-@app.route('/books', methods=['POST'])
-def postBooks():
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    data = request.get_json()
-    query = 'INSERT INTO books (title, author, pages_num, review) VALUES (%s, %s, %s, %s)'
-    cur.execute(query, (data['title'], data['author'], data['pages_num'], data['review']))
-    book = {
-        "title": data["title"],
-        "author": data["author"],
-        "pages_num": data["pages_num"],
-        "review": data["review"]
-    }
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"success": "Book successfully created", "book": book}), 201
-
-
 
 @app.route('/auth/signup', methods=["POST"])
 def signup():
@@ -71,7 +34,7 @@ def login():
     validator = LoginValidator(request)
     if not validator.validate_login_data():
         return jsonify({"error": validator.error}), 400
-    user = User().login_user(data['username'], data['password'])
+    user = User().get_user_auth_details(data['username'], data['password'])
     if not user:
         return jsonify({"error" : "Invalid username or password"}), 404
     token = encode_token(user['id'], user['username'])
@@ -84,31 +47,38 @@ def login():
 @app.route('/auth/profile/<string:username>')
 @required_token
 def get_user_profile(username):
-    current_user = get_current_user()
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
-    if current_user['username'] != username:
-        return jsonify({"error": "You are unauthorized!"}), 401
-    user = next(filter(lambda x: x['username'] == username, users), None)
-    if user is None:
+    user = User().get_user(username)
+    if not user:
         return jsonify({"error":"User not found!"}), 404
+    if current_user['username'] != user['username']:
+        return jsonify({"error": "You are not authorized!"}), 401
     return user
 
 @app.route('/auth/profile/<string:username>', methods=["PUT"])
 @required_token
-def update_profile(username):
-    data = request.get_json()
-    data["password"] = generate_password_hash(data['password'])
-    current_user = get_current_user()
+def update_password(username):
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
     if current_user['username'] != username:
-        return jsonify({"error": "You are unauthorized!"}), 401
-    user = next(filter(lambda x: x['username'] == username, users), None)
-    if user:
-        user.update(data)
-        return user
-    return jsonify({"error" : "User not found"}), 404
+            return jsonify({"error": "You are not authorized!"}), 401
+    data = request.get_json()
+    validator = UserValidator(request)
+    if validator.password_is_valid():
+        user = User().get_user_auth_details(username, data['old_password'])
+        if not user:
+            return jsonify({"error": "Incorrect old password!"}), 401
+        if check_password_hash(user['password'], data['new_password']):
+            return jsonify({"error": "The new password cannot be the same as the old password"}), 401
+        password = generate_password_hash(data['new_password'])
+        record = User().update_user_password(username, password)
+        if record > 0:
+            return jsonify({"success":"Password successfully updated"})    
+        return jsonify({"error" : "User not found"}), 404
+    return jsonify({"error": validator.error}), 400
 
 @app.route('/questions')
 def get_questions():

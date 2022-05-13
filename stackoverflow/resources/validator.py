@@ -96,6 +96,25 @@ class UserValidator:
         if cur.fetchone():
             raise Exception(f"User with email '{email}' already exists")
 
+    def password_is_valid(self):
+        try:
+            user = self.request.get_json()
+            assert isinstance(user, dict),'Ensure to enter registration details in json format'
+            self.ensure_password_field_not_empty(user)
+            self.ensure_valid_password_datatype(user)
+            self.validate_password(user["new_password"])
+            return True
+        except Exception as e:
+            self.error = str(e)
+            return False
+
+    def ensure_password_field_not_empty(self, user):
+        assert 'old_password' in user, "'current_password' key not specified in the json data"
+        assert 'new_password' in user, "'new_password' key not specified in the json data"
+
+    def ensure_valid_password_datatype(self, user):
+        assert isinstance(user["old_password"], str), 'Password should be a string'
+        assert isinstance(user["new_password"], str), 'Password should be a string'
 class LoginValidator:
     def __init__(self, request):
         self.request = request

@@ -31,9 +31,9 @@ def decode_token(token):
     decode = jwt.decode(token, secret_key, algorithms='HS256')
     return decode
 
-def get_id_token():
-    user_id = decode_token(ensure_token_available_and_clean())['uid']
-    return user_id
+def get_username_from_token():
+    username = decode_token(ensure_token_available_and_clean())['unm']
+    return username
 
 def required_token(func):
     @wraps(func)
