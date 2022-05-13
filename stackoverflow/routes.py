@@ -114,7 +114,7 @@ def add_question():
 
 @app.route('/questions/<int:id>')
 def get_question(id):
-    question = Question().get_question(id)
+    question = Question().get_question_by_id(id)
     if question:
         return question
     return jsonify({"error" : "Question not found"}), 404
@@ -123,17 +123,15 @@ def get_question(id):
 @app.route('/questions/<int:id>', methods=["PUT"])
 @required_token
 def edit_question(id):
-    current_user = get_current_user()
+    current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
-    question = next(filter(lambda x: x['id'] == id, questions), None)
-    if question:
-        if current_user['username'] == question['author']:
-            question.update(data)
-            return question
-        return jsonify({"error": "You are unauthorized!"}), 401
-    return jsonify({"error" : "Question not found"})
+    record = Question().update_question(id,current_user['username'],
+    data['title'],data['description'],data['stack'])
+    if record > 0:
+        return jsonify({"success":"Question successfully updated"})
+    return jsonify({"error" : "Question not found"}), 404
 
 @app.route('/questions/<int:id>', methods=["DELETE"])
 @required_token
