@@ -205,9 +205,6 @@ def delete_answer(id,answer_id):
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
-    # answer = Answer().get_answer_by_answer_id(id, answer_id)
-    # if not answer:
-    #     return jsonify({"error" : "Answer not found"}), 404
     response = Answer().delete_answer_by_id(answer_id, current_user['username'])
     if response:
         return jsonify({"message": "Answer successfully deleted"})
