@@ -1,4 +1,6 @@
 from ..resources.auth_token import get_id_token
+from ..init_db import get_db_connection
+from psycopg2.extras import RealDictCursor
 class User:
     def __init__(self, _id, username, email, fullname, sex, password):
         self.id = _id

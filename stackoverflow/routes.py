@@ -49,38 +49,26 @@ def postBooks():
 @app.route('/auth/signup', methods=["POST"])
 def signup():
     data = request.get_json()
-    user = next(filter(lambda x: x['username'] == data['username'], users), None)
-    if user:
-        return jsonify(
-            {"error": f"A user with the username '{data['username']}' already exists"}
-            ), 400
-    user = next(filter(lambda x: x['email'] == data['email'], users), None)
-    if user:
-        return jsonify(
-            {"error": f"A user with the email '{data['email']}' already exists"}
-            ), 400
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
     validator = UserValidator(request)
     if validator.validate_user_data():
-        new_user = {
-            "id": data["id"],
-            "username": data["username"],
-            "email": data["email"],
-            "firstname": data["firstname"],
-            "lastname": data["firstname"],
-            "gender": data["gender"],
-            "password": generate_password_hash(data["password"]) 
-        }
+        query = """
+        INSERT INTO users (username,email,firstname,lastname,gender,password) VALUES (%s,%s,%s,%s,%s,%s)
+        """
+        cur.execute(query, (data['username'],data['email'],data['firstname'],data['lastname'],
+        data['gender'],generate_password_hash(data['password'])))
+        conn.commit()
+        cur.close()
+        conn.close()
         display_user = {
-            "id": data["id"],
             "username": data["username"],
             "email": data["email"],
             "firstname": data["firstname"],
             "lastname": data["lastname"],
             "gender": data["gender"],
         }
-        
-        users.append(new_user)
-        return display_user, 201
+        return jsonify({"success":"User created successfully", "user": display_user}), 201
     return jsonify({"error": validator.error}), 400
     
 

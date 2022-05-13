@@ -1,4 +1,6 @@
 import re
+from ..init_db import get_db_connection
+from psycopg2.extras import RealDictCursor
 
 class QuestionValidator:
     def __init__(self, request):
@@ -37,6 +39,7 @@ class UserValidator:
             self.ensure_valid_datatypes(user)
             self.validate_email_address(user["email"])
             self.validate_password(user["password"])
+            self.check_user_exists(user['username'], user['email'])
             return True
         except Exception as e:
             self.error = str(e)
@@ -79,7 +82,32 @@ class UserValidator:
             'Password must contain atleast one lowercase letter, one uppercase letter,'
             ' a digit and be 6 to 64 characters long!'
         )
-        assert password_is_valid, error_message  
+        assert password_is_valid, error_message 
+
+    def check_user_exists(self, username, email):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = f"SELECT username FROM users WHERE username='{username}'"
+        cur.execute(query, (username,))
+        if cur.fetchone():
+            raise Exception(f"User with username '{username}' already exists")
+        query = f"SELECT email FROM users WHERE email='{email}'"
+        cur.execute(query, (email,))
+        if cur.fetchone():
+            raise Exception(f"User with email '{email}' already exists")
+
+    # def check_if_user_exists_already(self, username, email):
+    #     global cursor
+    #     query = """SELECT username FROM users WHERE username='{}'""".format(username)
+    #     query1 = """SELECT email FROM users WHERE email='{}'""".format(email)
+    #     cursor.execute(query)
+
+    #     if cursor.fetchall():
+    #         raise Exception(f'{username} already exists')
+        
+    #     cursor.execute(query1)
+    #     if cursor.fetchall():    
+    #         raise Exception(f'{email} already in the system') 
 
 class LoginValidator:
     def __init__(self, request):
@@ -99,15 +127,3 @@ class LoginValidator:
         assert 'password' in user, "'password' key not specified in the json data"
         assert isinstance(user, dict),"'Ensure' to enter login details in json format"
     
-    # def check_if_user_exists_already(self, username, email):
-    #     global cursor
-    #     query = """SELECT username FROM users WHERE username='{}'""".format(username)
-    #     query1 = """SELECT email FROM users WHERE email='{}'""".format(email)
-    #     cursor.execute(query)
-
-    #     if cursor.fetchall():
-    #         raise Exception(f'{username} already exists')
-        
-    #     cursor.execute(query1)
-    #     if cursor.fetchall():    
-    #         raise Exception(f'{email} already in the system')

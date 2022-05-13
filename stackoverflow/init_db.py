@@ -20,7 +20,7 @@ cur.execute('CREATE TABLE books (id serial PRIMARY KEY,'
                                  'date_added date DEFAULT CURRENT_TIMESTAMP);'
                                  )
 cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
-                                'username varchar (150) NOT NULL,'
+                                'username varchar (150) UNIQUE NOT NULL,'
                                 'email varchar (150) NOT NULL,'
                                 'firstname varchar (150) NOT NULL,'
                                 'lastname varchar(150) NOT NULL,'
