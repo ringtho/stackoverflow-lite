@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from .resources.auth_token import required_token, encode_token
 from .resources.validator import QuestionValidator, UserValidator, LoginValidator
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models.user import users, get_current_user
+from .models.user import User, users, get_current_user
 from .models.question import questions
 from .init_db import get_db_connection
 from psycopg2.extras import RealDictCursor
@@ -49,18 +49,11 @@ def postBooks():
 @app.route('/auth/signup', methods=["POST"])
 def signup():
     data = request.get_json()
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
     validator = UserValidator(request)
     if validator.validate_user_data():
-        query = """
-        INSERT INTO users (username,email,firstname,lastname,gender,password) VALUES (%s,%s,%s,%s,%s,%s)
-        """
-        cur.execute(query, (data['username'],data['email'],data['firstname'],data['lastname'],
-        data['gender'],generate_password_hash(data['password'])))
-        conn.commit()
-        cur.close()
-        conn.close()
+        password = generate_password_hash(data['password'])
+        User().create_user(data['username'],data['email'],data['firstname'],data['lastname'],
+        data['gender'],password)
         display_user = {
             "username": data["username"],
             "email": data["email"],
@@ -78,18 +71,15 @@ def login():
     validator = LoginValidator(request)
     if not validator.validate_login_data():
         return jsonify({"error": validator.error}), 400
-    user = next(filter(lambda x: x['username'] == data['username'], users), None)
+    user = User().login_user(data['username'], data['password'])
     if not user:
-        return jsonify({"error" : "Invalid username"}), 404
-    password = check_password_hash(user.get("password"), data["password"])
-    if password:
-        token = encode_token(user['id'], user['username'])
-        return jsonify({
-            "access_token": token,
-            "username": user["username"],
-            "email": user['email']
-        })
-    return jsonify({"error": "Incorrect password used"}), 400
+        return jsonify({"error" : "Invalid username or password"}), 404
+    token = encode_token(user['id'], user['username'])
+    return jsonify({
+        "access_token": token,
+        "username": user["username"],
+        "email": user['email']
+    })
 
 @app.route('/auth/profile/<string:username>')
 @required_token

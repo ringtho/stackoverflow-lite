@@ -88,26 +88,13 @@ class UserValidator:
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         query = f"SELECT username FROM users WHERE username='{username}'"
-        cur.execute(query, (username,))
+        cur.execute(query)
         if cur.fetchone():
             raise Exception(f"User with username '{username}' already exists")
         query = f"SELECT email FROM users WHERE email='{email}'"
-        cur.execute(query, (email,))
+        cur.execute(query)
         if cur.fetchone():
             raise Exception(f"User with email '{email}' already exists")
-
-    # def check_if_user_exists_already(self, username, email):
-    #     global cursor
-    #     query = """SELECT username FROM users WHERE username='{}'""".format(username)
-    #     query1 = """SELECT email FROM users WHERE email='{}'""".format(email)
-    #     cursor.execute(query)
-
-    #     if cursor.fetchall():
-    #         raise Exception(f'{username} already exists')
-        
-    #     cursor.execute(query1)
-    #     if cursor.fetchall():    
-    #         raise Exception(f'{email} already in the system') 
 
 class LoginValidator:
     def __init__(self, request):

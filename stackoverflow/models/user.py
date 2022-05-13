@@ -1,14 +1,34 @@
+from werkzeug.security import check_password_hash
 from ..resources.auth_token import get_id_token
 from ..init_db import get_db_connection
 from psycopg2.extras import RealDictCursor
 class User:
-    def __init__(self, _id, username, email, fullname, sex, password):
-        self.id = _id
-        self.username = username
-        self.email = email
-        self.fullname = fullname
-        self.sex = sex
-        self.password = password
+
+    def create_user(self,username,email,firstname,lastname,gender,password):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        query =f"""
+        INSERT INTO users (username,email,firstname,lastname,gender,password) 
+        VALUES ('{username}','{email}','{firstname}','{lastname}','{gender}','{password}')
+        """
+        user = cur.execute(query)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return user
+
+    def login_user(self, username, password):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query =f"""
+        SELECT * FROM users WHERE username='{username}'
+        """
+        cur.execute(query)
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        if check_password_hash(user['password'], password):
+            return user
 
 def get_current_user():
     user_id = get_id_token()
