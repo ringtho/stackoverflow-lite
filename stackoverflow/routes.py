@@ -277,13 +277,14 @@ def create_comment_on_answer(id, answer_id):
             }]
         }
     return comment, 201
+
 comment = '/questions/<int:id>/answers/<int:answer_id>/comments/<int:comment_id>'
 @app.route(comment, methods=['DELETE'])
+@required_token
 def delete_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
-    data = request.get_json()
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
@@ -295,9 +296,9 @@ def delete_comment(id, answer_id, comment_id):
         return jsonify({"message": "Comment successfully deleted"})
     return jsonify({"error" : "Comment not found"}), 404
 
-comment = '/questions/<int:id>/answers/<int:answer_id>/comments/<int:comment_id>'
 @app.route(comment, methods=['PUT'])
-def delete_comment(id, answer_id, comment_id):
+@required_token
+def edit_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
@@ -308,10 +309,15 @@ def delete_comment(id, answer_id, comment_id):
     answer = Answer().get_answer_by_answer_id(id, answer_id)
     if not answer:
         return jsonify({"error" : "Answer not found"}), 404
-    response = Comment().delete_comment(comment_id, current_user['username'])
-    if response:
-        return jsonify({"message": "Comment successfully deleted"})
+    validator = CommentValidator(request)
+    if not validator.comment_is_valid():
+        return jsonify({"error": validator.error}), 400
+    record = Comment().update_comment(comment_id, data['comment'],
+    current_user['username'])
+    if record > 0:
+        return jsonify({"success":"Comment successfully updated"})
     return jsonify({"error" : "Comment not found"}), 404
+
 
 
 

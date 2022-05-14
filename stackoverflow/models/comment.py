@@ -35,7 +35,7 @@ class Comment:
         SELECT * FROM comments WHERE id='{comment_id}'
         """
         cur.execute(query)
-        comment = cur.fetchall()
+        comment = cur.fetchone()
         cur.close()
         conn.close()
         return comment
@@ -45,6 +45,20 @@ class Comment:
         cur = conn.cursor(cursor_factory=RealDictCursor)
         query = f"""
         DELETE FROM comments WHERE id='{comment_id}'
+        AND author='{author}'
+        """
+        cur.execute(query)
+        rows = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        return rows
+
+    def update_comment(self,comment_id,comment,author):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = f"""
+        UPDATE comments SET comment='{comment}' WHERE id='{comment_id}'
         AND author='{author}'
         """
         cur.execute(query)
