@@ -279,9 +279,9 @@ def create_comment_on_answer(id, answer_id):
     return comment, 201
 
 comment = '/questions/<int:id>/answers/<int:answer_id>/comments/<int:comment_id>'
-@app.route(comment, methods=['DELETE'])
+@app.route(comment)
 @required_token
-def delete_comment(id, answer_id, comment_id):
+def get_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
     if current_user is None:
         return jsonify({"error":"Please provide a token to continue"}), 401
@@ -291,10 +291,8 @@ def delete_comment(id, answer_id, comment_id):
     answer = Answer().get_answer_by_answer_id(id, answer_id)
     if not answer:
         return jsonify({"error" : "Answer not found"}), 404
-    response = Comment().delete_comment(comment_id, current_user['username'])
-    if response:
-        return jsonify({"message": "Comment successfully deleted"})
-    return jsonify({"error" : "Comment not found"}), 404
+    comment = Comment().get_single_comment_by_id(comment_id)
+    return jsonify({"answer": answer, "comment": comment})
 
 @app.route(comment, methods=['PUT'])
 @required_token
@@ -317,6 +315,25 @@ def edit_comment(id, answer_id, comment_id):
     if record > 0:
         return jsonify({"success":"Comment successfully updated"})
     return jsonify({"error" : "Comment not found"}), 404
+
+@app.route(comment, methods=['DELETE'])
+@required_token
+def delete_comment(id, answer_id, comment_id):
+    current_user = User().get_current_user_from_token()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    question = Question().get_question_by_id(id)
+    if question is None:
+        return jsonify({"error" : "Question not found"}), 404
+    answer = Answer().get_answer_by_answer_id(id, answer_id)
+    if not answer:
+        return jsonify({"error" : "Answer not found"}), 404
+    response = Comment().delete_comment(comment_id, current_user['username'])
+    if response:
+        return jsonify({"message": "Comment successfully deleted"})
+    return jsonify({"error" : "Comment not found"}), 404
+
+
 
 
 
