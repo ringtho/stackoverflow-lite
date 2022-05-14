@@ -69,7 +69,7 @@ class Question:
         conn.close()
         return rows
 
-    def get_questions_by_author(self, id, author):
+    def get_questions_by_author(self, author):
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         query = f"""

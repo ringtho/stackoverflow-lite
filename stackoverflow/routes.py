@@ -333,6 +333,20 @@ def delete_comment(id, answer_id, comment_id):
         return jsonify({"message": "Comment successfully deleted"})
     return jsonify({"error" : "Comment not found"}), 404
 
+@app.route('/questions/<string:username>')
+@required_token
+def get_current_users_questions(username):
+    current_user = User().get_current_user_from_token()
+    if current_user is None:
+        return jsonify({"error":"Please provide a token to continue"}), 401
+    if current_user['username'] == username:
+        questions = Question().get_questions_by_author(current_user['username'])
+        if questions:
+            return jsonify({"questions": questions})
+        return jsonify({"error": "Questions not found"}), 404
+    return jsonify({"error": "You are not authorised"}), 401
+    
+
 
 
 
