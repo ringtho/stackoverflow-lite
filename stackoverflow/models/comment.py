@@ -27,3 +27,29 @@ class Comment:
         cur.close()
         conn.close()
         return comments
+
+    def get_single_comment_by_id(self, comment_id):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = f"""
+        SELECT * FROM comments WHERE id='{comment_id}'
+        """
+        cur.execute(query)
+        comment = cur.fetchall()
+        cur.close()
+        conn.close()
+        return comment
+    
+    def delete_comment(self, comment_id, author):
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = f"""
+        DELETE FROM comments WHERE id='{comment_id}'
+        AND author='{author}'
+        """
+        cur.execute(query)
+        rows = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        return rows
