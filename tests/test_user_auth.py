@@ -52,7 +52,8 @@ class TestUsers():
     def test_get_user_profile(self):
         access_token = GetTokenTests().get_user_post()
         token = "Bearer " + access_token
-        response = self.test_client.get("/auth/profile/user", headers={"Authorization":token})
+        response = self.test_client.get("/auth/profile/user", 
+        headers={"Authorization":token})
         data = json.loads(response.data.decode('utf-8'))
         print(data)
         assert type(data) is dict
@@ -63,7 +64,8 @@ class TestUsers():
     def test_get_nonexistent_user_profile(self):
         access_token = GetTokenTests().get_user_post()
         token = "Bearer " + access_token
-        response = self.test_client.get("/auth/profile/abc", headers={"Authorization":token})
+        response = self.test_client.get("/auth/profile/abc", 
+        headers={"Authorization":token})
         data = json.loads(response.data.decode('utf-8'))
         print(data)
         assert type(data) is dict
