@@ -1,6 +1,6 @@
 # StackOverflow-lite 
 
-
+[![CircleCI](https://circleci.com/gh/circleci/stackoverflow-lite.svg?style=svg)](https://circleci.com/gh/circleci/stackoverflow-lite)
 
 ## Overview
 StackOverflow-lite is a platform where people can ask questions and provide answers.
