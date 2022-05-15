@@ -51,7 +51,6 @@ class TestQuestions():
         self.test_post_question()
         response = self.test_client.get('/questions')
         res = json.loads(response.data.decode('utf-8')).get('questions')
-        print(res)
         assert type(res) is list
         assert res[0]['author'] == 'user'
         assert type(res[0]) is dict
@@ -63,7 +62,6 @@ class TestQuestions():
         question = self.test_client.post('/questions', json=self.question, 
         headers=dict(Authorization=token))
         data = json.loads(question.data.decode('utf-8'))
-        print(data)
         question_id = data['data']['id']
 
         response = self.test_client.get(f'/questions/{question_id}')
@@ -72,6 +70,45 @@ class TestQuestions():
         assert type(res) is dict
         assert res['question']['title'] == "Autocommit in psycopg2"
         assert response.status_code == 200
+
+    def test_delete_question(self):
+        access_token = GetTokenTests().get_user_post()
+        token = "Bearer " + access_token
+        question = self.test_client.post('/questions', json=self.question, 
+        headers=dict(Authorization=token))
+        data = json.loads(question.data.decode('utf-8'))
+        question_id = data['data']['id']
+        response = self.test_client.delete(f'/questions/{question_id}',
+        headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'success' in res
+        assert res['success']=="Question successfully deleted"
+        assert response.status_code == 200
+
+    def test_update_question(self):
+        access_token = GetTokenTests().get_user_post()
+        token = "Bearer " + access_token
+        question = self.test_client.post('/questions', json=self.question, 
+        headers=dict(Authorization=token))
+        data = json.loads(question.data.decode('utf-8'))
+        question_id = data['data']['id']
+
+        response = self.test_client.put(f'/questions/{question_id}', 
+        json=self.question, headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'success' in res
+        assert res['success']=="Question successfully updated"
+        assert response.status_code == 200
+
+        
+
+
+
+
+
+
 
 
 

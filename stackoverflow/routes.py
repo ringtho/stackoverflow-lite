@@ -151,7 +151,7 @@ def delete_question(id):
         return jsonify({"error":"Please provide a token to continue"}), 401
     question = Question().delete_question_by_id(id, current_user['username'])
     if question:
-        return jsonify({"message": "Question successfully deleted"})
+        return jsonify({"success": "Question successfully deleted"})
     return jsonify({"error" : "Question not found"}), 404
 
 @app.route('/questions/<int:id>/answers', methods=["POST"])
