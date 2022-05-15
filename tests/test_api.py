@@ -1,29 +1,29 @@
 import pytest
 import json
-from app import app
+from stackoverflow.routes import app
 
 question = {
-    "id": 2,
-    "question": "Django Rest Framework",
-    "description": "Whenever I am logging in I get an error that affects my application",
-    "stack": "Django, Python"
+    "title": "Need to lesrn Flex",
+    "description": "I need to learn more frontend",
+    "stack": "HTML, CSS"
 }
 
 def test_get_questions():
     response = app.test_client().get('/questions')
     res = json.loads(response.data.decode('utf-8')).get('questions')
     assert type(res) is list
-    assert res[0]['id'] == 1
-    assert type(res[0]['answers']) is list
+    assert res[0]['id'] == 2
+    assert res[0]['author'] == 'sringtho'
     assert type(res[0]) is dict
     assert response.status_code == 200
 
 def test_get_single_question():
     response = app.test_client().get('/questions/1')
     res = json.loads(response.data.decode('utf-8'))
+    assert type(res['answers']) is list
     assert type(res) is dict
-    assert res['id'] == 1
-    assert res['question'] == "Log in to use Flask"
+    assert res['question']['id'] == 1
+    assert res['question']['title'] == "I think we try REact"
     assert response.status_code == 200
 
 def test_post_question_no_token():

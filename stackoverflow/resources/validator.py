@@ -1,5 +1,5 @@
 import re
-from ..init_db import get_db_connection
+from ..init_db import Database
 from psycopg2.extras import RealDictCursor
 
 class QuestionValidator:
@@ -144,7 +144,7 @@ class UserValidator:
         assert password_is_valid, error_message 
 
     def check_user_exists(self, username, email):
-        conn = get_db_connection()
+        conn = Database().get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         query = f"SELECT username FROM users WHERE username='{username}'"
         cur.execute(query)
