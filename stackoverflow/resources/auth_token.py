@@ -3,6 +3,8 @@ import jwt
 from flask import request, jsonify
 import datetime
 from functools import wraps
+from dotenv import load_dotenv
+load_dotenv()
 
 secret_key = os.environ.get('SECRET_KEY')
 

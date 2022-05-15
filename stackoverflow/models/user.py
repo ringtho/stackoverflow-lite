@@ -1,7 +1,6 @@
 from werkzeug.security import check_password_hash
 from ..resources.auth_token import get_username_from_token
 from ..init_db import Database
-from psycopg2.extras import RealDictCursor
 class User:
 
     def create_user(self,username,email,firstname,lastname,gender,password):

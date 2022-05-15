@@ -1,6 +1,5 @@
 
 from ..init_db import Database
-from psycopg2.extras import RealDictCursor
 
 class Answer:
 

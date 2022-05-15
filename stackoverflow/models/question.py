@@ -59,3 +59,10 @@ class Question:
         cur.execute(query)
         question = cur.fetchall()
         return question
+
+    def get_question_id(self):
+        cursor = Database().get_cursor()
+        query = "SELECT id FROM questions ORDER BY id DESC"
+        cursor.execute(query)
+        question_id = cursor.fetchone()["id"]
+        return question_id

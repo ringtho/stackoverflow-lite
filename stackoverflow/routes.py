@@ -104,7 +104,9 @@ def add_question():
     if validator.question_is_valid():
         Question().create_question(data['title'],data['description'],
         data['stack'], current_user['username'])
+        question_id = Question().get_question_id()
         new_question = {
+            "id": question_id,
             "title": data['title'],
             "description": data['description'],
             "stack": data['stack'],

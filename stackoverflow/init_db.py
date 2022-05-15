@@ -1,19 +1,21 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class Database:
 
     def __init__(self):
         try:
-            if os.getenv("STATE")=="Testing":
-                dbname = os.environ.get('DB_NAME_TEST')
+            if os.environ.get('STATE')=="Testing":
+                database = os.environ.get('DB_NAME_TEST')
             else:
-                dbname = os.environ.get('DB_NAME')
+                database = os.environ.get('DB_NAME')
             self.conn = psycopg2.connect(
                 host="localhost",
-                database=dbname,
+                database=database,
                 user=os.environ.get('DB_USERNAME'),
                 password=os.environ.get('DB_PASSWORD')
             )
@@ -23,7 +25,7 @@ class Database:
             self.create_questions_table()
             self.create_answers_table()
             self.create_comments_table()          
-            print(f"connected to database '{dbname}'...")
+            print(f"connected to database '{database}'...")
         except (Exception, psycopg2.OperationalError) as e:
             print(e)
 
@@ -94,55 +96,6 @@ class Database:
 if __name__ == '__main__':
     db = Database()
 
-# cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
-#                                 'username varchar (150) UNIQUE NOT NULL,'
-#                                 'email varchar (150) UNIQUE NOT NULL,'
-#                                 'firstname varchar (150) NOT NULL,'
-#                                 'lastname varchar(150) NOT NULL,'
-#                                 'gender varchar (150),'
-#                                 'password varchar (150) NOT NULL,'
-#                                 'created_on timestamp DEFAULT CURRENT_TIMESTAMP);'
-#                                 )
-# cur.execute('CREATE TABLE IF NOT EXISTS questions (id serial PRIMARY KEY,'
-#                                 'title varchar (150) NOT NULL,'
-#                                 'description text,'
-#                                 'stack varchar (150) NOT NULL,'
-#                                 'author varchar(150) NOT NULL,'
-#                                 'created_on timestamp DEFAULT NOW(),'
-#                                 'FOREIGN KEY (author) REFERENCES users (username)'
-#                                 'ON DELETE CASCADE);'
-#                                 )
-# cur.execute('CREATE TABLE IF NOT EXISTS answers (id serial PRIMARY KEY,'
-#                                 'question_id INTEGER NOT NULL,'
-#                                 'answer text,'
-#                                 'preferred boolean NOT NULL,'
-#                                 'author varchar(150) NOT NULL,'
-#                                 'created_on timestamp DEFAULT NOW(),'
-#                                 'FOREIGN KEY (question_id) REFERENCES questions (id)'
-#                                 'ON DELETE CASCADE);'
-#                                 )
-# cur.execute('CREATE TABLE IF NOT EXISTS comments (id serial PRIMARY KEY,'
-#                                 'answer_id INTEGER NOT NULL,'
-#                                 'comment text,'
-#                                 'author varchar(150) NOT NULL,'
-#                                 'created_on timestamp DEFAULT NOW(),'
-#                                 'FOREIGN KEY (answer_id) REFERENCES answers (id)'
-#                                 'ON DELETE CASCADE);'
-#                                 )
-
-# conn = psycopg2.connect(
-#     host="localhost",
-#     database="stackoverflow",
-#     user=os.environ['DB_USERNAME'],
-#     password=os.environ['DB_PASSWORD']
-# )
-
-# cur = conn.cursor()
-
-# conn.commit()
-
-# cur.close()
-# conn.close()
 
 
         
