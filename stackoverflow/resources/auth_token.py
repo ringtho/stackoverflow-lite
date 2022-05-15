@@ -1,9 +1,10 @@
+import os
 import jwt
 from flask import request, jsonify
 import datetime
 from functools import wraps
 
-secret_key = "sringtho"
+secret_key = os.environ.get('SECRET_KEY')
 
 def encode_token(user_id, username):
     payload = {

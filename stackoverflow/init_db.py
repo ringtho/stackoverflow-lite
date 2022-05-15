@@ -8,16 +8,16 @@ class Database:
     def __init__(self):
         try:
             if os.getenv("STATE")=="Testing":
-                dbname = "stackoverflowtest"
+                dbname = os.environ.get('DB_NAME_TEST')
             else:
-                dbname = "stackoverflow"
+                dbname = os.environ.get('DB_NAME')
             self.conn = psycopg2.connect(
                 host="localhost",
                 database=dbname,
-                user=os.environ['DB_USERNAME'],
-                password=os.environ['DB_PASSWORD'])
+                user=os.environ.get('DB_USERNAME'),
+                password=os.environ.get('DB_PASSWORD')
+            )
             self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-            # self.cur = self.conn.cursor()
             self.conn.autocommit = True
             self.create_users_table()
             self.create_questions_table()
@@ -81,15 +81,6 @@ class Database:
         ON DELETE CASCADE);
         """
         self.cursor.execute(query)
-
-    def get_db_connection(self):
-        conn = psycopg2.connect(
-            host="localhost",
-            database="stackoverflow",
-            user=os.environ['DB_USERNAME'],
-            password=os.environ['DB_PASSWORD']
-        )
-        return conn
 
     def empty_tables(self):
         self.cursor.execute("TRUNCATE TABLE users CASCADE")
