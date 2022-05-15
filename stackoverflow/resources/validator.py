@@ -1,5 +1,5 @@
 import re
-from ..init_db import Database
+from stackoverflow.init_db import Database
 
 class QuestionValidator:
     def __init__(self, request):

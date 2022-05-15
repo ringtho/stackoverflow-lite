@@ -1,6 +1,6 @@
 from werkzeug.security import check_password_hash
-from ..resources.auth_token import get_username_from_token
-from ..init_db import Database
+from stackoverflow.resources.auth_token import get_username_from_token
+from stackoverflow.init_db import Database
 class User:
 
     def create_user(self,username,email,firstname,lastname,gender,password):

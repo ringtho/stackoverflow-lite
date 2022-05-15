@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request
-from .resources.auth_token import required_token, encode_token
-from .resources.validator import (QuestionValidator, 
+from stackoverflow.resources.auth_token import required_token, encode_token
+from stackoverflow.resources.validator import (QuestionValidator, 
 UserValidator, LoginValidator, AnswerValidator, CommentValidator)
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models.user import User
-from .models.question import Question
-from .models.answer import Answer
-from .models.comment import Comment
+from stackoverflow.models.user import User
+from stackoverflow.models.question import Question
+from stackoverflow.models.answer import Answer
+from stackoverflow.models.comment import Comment
 
 
 
