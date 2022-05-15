@@ -3,7 +3,7 @@ import pytest
 import json
 from stackoverflow.routes import app
 from stackoverflow.init_db import Database
-from .get_token import GetTokenTests
+from tests.get_token import GetTokenTests
 
 class TestQuestions():
     @classmethod
