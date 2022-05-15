@@ -2,6 +2,10 @@
 
 [![CircleCI](https://circleci.com/gh/circleci/stackoverflow-lite.svg?style=svg)](https://circleci.com/gh/circleci/stackoverflow-lite)
 
+
+[![CircleCI](https://circleci.com/gh/circleci/stackoverflow-lite/tree/api.svg?style=svg)]
+(https://circleci.com/gh/circleci/stackoverflow-lite/?branch=api)
+
 ## Overview
 StackOverflow-lite is a platform where people can ask questions and provide answers.
 
