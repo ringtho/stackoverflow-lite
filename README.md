@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite.svg?style=svg)](https://circleci.com/gh/ringtho/stackoverflow-lite)
 
-[![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite/tree/api?style=svg)](https://circleci.com/gh/ringtho/stackoverflow-lite/?branch=api)
+[![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite/tree/api?style=svg)](https://circleci.com/gh/ringtho/stackoverflow-lite?branch=api)
 
 
 ## Overview
