@@ -1,7 +1,5 @@
 # StackOverflow-lite 
 
-[![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite.svg?style=shield)](https://circleci.com/gh/ringtho/stackoverflow-lite)
-
 [![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite/tree/api.svg?style=shield)](https://circleci.com/gh/ringtho/stackoverflow-lite/?branch=api)
 
 
