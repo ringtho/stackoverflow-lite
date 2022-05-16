@@ -1,6 +1,5 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from stackoverflow.routes import app
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -10,12 +9,6 @@ class Database:
 
     def __init__(self):
         try:
-            # if os.environ.get('ENV') == 'production':
-            #     app.config.from_object('config.ProductionConfig')
-                
-            # else:
-            #     app.config.from_object('config.DevelopmentConfig')
-
             if os.environ.get('STATE')=="Testing":
                 database = os.environ.get('DB_NAME_TEST')
             else:
