@@ -12,6 +12,10 @@ from stackoverflow.models.comment import Comment
 
 app = Flask(__name__)
 
+@app.route('/')
+def hello():
+    return jsonify({"message": "hello World"})
+
 @app.route('/auth/signup', methods=["POST"])
 def signup():
     data = request.get_json()
