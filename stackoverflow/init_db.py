@@ -26,7 +26,6 @@ class Database:
 
     def create_users_table(self):
         query = """
-        DROP TABLE users CASCADE;
         CREATE TABLE IF NOT EXISTS users 
         (id serial PRIMARY KEY,
         username varchar (150) UNIQUE NOT NULL,
@@ -41,7 +40,6 @@ class Database:
 
     def create_questions_table(self):
         query = """
-        DROP TABLE questions CASCADE;
         CREATE TABLE IF NOT EXISTS questions 
         (id serial PRIMARY KEY,
         title varchar (150) NOT NULL,
@@ -56,7 +54,6 @@ class Database:
 
     def create_answers_table(self):
         query = """
-        DROP TABLE answers CASCADE;
         CREATE TABLE IF NOT EXISTS answers 
         (id serial PRIMARY KEY,
         question_id INTEGER NOT NULL,
@@ -71,7 +68,6 @@ class Database:
 
     def create_comments_table(self):
         query = """
-        DROP TABLE comments CASCADE;
         CREATE TABLE IF NOT EXISTS comments 
         (id serial PRIMARY KEY,
         answer_id INTEGER NOT NULL,
