@@ -10,22 +10,23 @@ class Database:
     def __init__(self):
         try:
             if os.environ.get('STATE')=="Testing":
-                database = os.environ.get('DB_NAME_TEST')
+                DATABASE_URI = os.environ.get('DATABASE_TEST')
             else:
-                database = os.environ.get('DB_NAME')
-            self.conn = psycopg2.connect(
-                host="localhost",
-                database=database,
-                user=os.environ.get('DB_USERNAME'),
-                password=os.environ.get('DB_PASSWORD')
-            )
+                DATABASE_URI = os.environ.get('DATABASE_URL')
+            self.conn = psycopg2.connect(DATABASE_URI)
+            # self.conn = psycopg2.connect(
+            #     host="localhost",
+            #     database=database,
+            #     user=os.environ.get('DB_USERNAME'),
+            #     password=os.environ.get('DB_PASSWORD')
+            # )
             self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
             self.conn.autocommit = True
             self.create_users_table()
             self.create_questions_table()
             self.create_answers_table()
             self.create_comments_table()          
-            print(f"connected to database '{database}'...")
+            print(f"connected to database '{DATABASE_URI}'...")
         except (Exception, psycopg2.OperationalError) as e:
             print(e)
 
