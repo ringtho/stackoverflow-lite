@@ -48,3 +48,10 @@ class Comment:
         cur.execute(query)
         rows = cur.rowcount
         return rows
+
+    def get_comment_id(self):
+        cursor = Database().get_cursor()
+        query = "SELECT id FROM comments ORDER BY id DESC"
+        cursor.execute(query)
+        comment_id = cursor.fetchone()["id"]
+        return comment_id

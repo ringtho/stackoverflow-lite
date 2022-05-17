@@ -142,6 +142,43 @@ class TestQuestions():
         assert "Invalid token" in res['error']
         assert response.status_code == 401
 
+    def test_get_current_users_questions(self):
+        self.test_post_question()
+        self.test_post_question()
+        token = self.get_user_token()
+        username = "user"
+        response = self.test_client.get(f'/questions/{username}',
+        headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'questions' in res
+        assert 'title' in res['questions'][0]
+        assert res['questions'][0]['author']=="user"
+        assert response.status_code == 200
+
+    def test_get_current_users_questions_no_questions(self):
+        token = self.get_user_token()
+        username = "user"
+        response = self.test_client.get(f'/questions/{username}',
+        headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'error' in res
+        assert res['error']=="Questions not found"
+        assert response.status_code == 404
+
+    def test_get_current_users_questions_unauthorized(self):
+        token = self.get_user_token()
+        token = self.get_user_token()
+        username = "sringtho"
+        response = self.test_client.get(f'/questions/{username}',
+        headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'error' in res
+        assert res['error']=="You are not authorised"
+        assert response.status_code == 401
+
 
         
 

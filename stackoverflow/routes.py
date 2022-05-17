@@ -87,7 +87,6 @@ def update_password(username):
         record = User().update_user_password(username, password)
         if record > 0:
             return jsonify({"success":"Password successfully updated"})    
-        return jsonify({"error" : "User not found"}), 404
     return jsonify({"error": validator.error}), 400
 
 @app.route('/questions')
@@ -238,24 +237,23 @@ def update_answer_as_preferred(id, answer_id):
                     "answer": answer["answer"],
                     "preferred": data['preferred']
                 }
+    message = {
+        "success": "Answer successfully updated",
+        "answer": new_answer
+        }
     if question['author'] == current_user['username']:
         current_preferred_answer = Answer().get_answers_with_true_preferred(id)
         if not current_preferred_answer:
             record = Answer().update_answer_preferred_option(id, 
             answer_id, data['preferred'])
             if record > 0:
-                return jsonify({
-                    "success": "Answer successfully updated",
-                    "answer": new_answer})
-            return jsonify({"error": "Internal Server error"}), 500
+                return jsonify(message)
         Answer().update_answer_preferred_option(id, 
         current_preferred_answer['id'], False)
         record = Answer().update_answer_preferred_option(id, 
         answer_id, data['preferred'])
         if record > 0:
-            return jsonify({
-                    "success": "Answer successfully updated",
-                    "answer": new_answer})
+            return jsonify(message)
     return jsonify({"error": "You are not authorized"}), 401
     
 
@@ -276,10 +274,12 @@ def create_comment_on_answer(id, answer_id):
     if not validator.comment_is_valid():
         return jsonify({"error": validator.error}), 400
     Comment().create_comment(answer_id, data['comment'], current_user['username'])
+    comment_id = Comment().get_comment_id()
     comment = {
         "answer": answer,
         "comment": [
             {
+                "id": comment_id,
                 "comment": data["comment"], 
                 "author": current_user['username']
             }]
@@ -338,7 +338,7 @@ def delete_comment(id, answer_id, comment_id):
         return jsonify({"error" : "Answer not found"}), 404
     response = Comment().delete_comment(comment_id, current_user['username'])
     if response:
-        return jsonify({"message": "Comment successfully deleted"})
+        return jsonify({"success": "Comment successfully deleted"})
     return jsonify({"error" : "Comment not found"}), 404
 
 @app.route('/questions/<string:username>')
