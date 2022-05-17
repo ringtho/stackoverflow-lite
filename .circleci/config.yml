@@ -12,6 +12,7 @@ jobs:
         environment:
           STATE: Testing
           DATABASE_TEST: postgresql://user@localhost/circleci_test?sslmode=disable
+          SECRET_KEY: test-this-stackoverflow-api
 
       - image: cimg/postgres:14.2
         
