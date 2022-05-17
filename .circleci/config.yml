@@ -9,6 +9,16 @@ jobs:
 
     docker:
       - image: cimg/python:3.8.9
+        environment:
+          STATE: Testing
+          DATABASE_TEST: postgresql://user@localhost/circleci_test?sslmode=disable
+
+      - image: cimg/postgres:14.2
+        
+        environment:
+          POSTGRES_USER: user
+          POSTGRES_DB: circleci_test
+          POSTGRES_PASSWORD: ""
 
     steps:
       - checkout
