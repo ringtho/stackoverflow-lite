@@ -32,8 +32,6 @@ jobs:
       - run: 
           name: Upload coverage data to coveralls.io
           command: coveralls
-      - store_artifacts:
-        path: htmlcov
 
 workflows:
   sample: 
