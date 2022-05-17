@@ -61,3 +61,10 @@ class Answer:
         cur.execute(query)
         rows = cur.rowcount
         return rows
+
+    def get_answer_id(self):
+        cursor = Database().get_cursor()
+        query = "SELECT id FROM answers ORDER BY id DESC"
+        cursor.execute(query)
+        answer_id = cursor.fetchone()["id"]
+        return answer_id

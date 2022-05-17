@@ -175,7 +175,9 @@ def add_answer(id):
     if current_user['username'] != question['author']:
         Answer().create_answer(question_id, data['answer'], 
         False, current_user['username'])
+        answer_id = Answer().get_answer_id()
         new_answer = {
+            "id": answer_id,
             "question": question_id,
             "author": current_user['username'],
             "answer": data['answer'],
