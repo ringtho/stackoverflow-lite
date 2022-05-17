@@ -28,10 +28,7 @@ jobs:
           pkg-manager: pip
       - run:
           name: Run tests
-          command: |
-          coverage run -m pytest
-          coverage report
-          coverage html
+          command: pytest --cov=api --cov-report term-missing
       - run: 
           name: Upload coverage data to coveralls.io
           command: coveralls
