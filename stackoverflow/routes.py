@@ -187,7 +187,7 @@ def add_answer(id):
         "success":"Successfully provided an answer",
         "data": new_answer
         }), 201
-    return jsonify({'error': "You are not allowed to answer your own question"})
+    return jsonify({'error': "You are not allowed to answer your own question"}), 403
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>')
 @required_token
@@ -247,7 +247,7 @@ def update_answer_as_preferred(id, answer_id):
                 return jsonify({
                     "success": "Answer successfully updated",
                     "answer": new_answer})
-            return jsonify({"error": "Answer not found!"}), 404
+            return jsonify({"error": "Internal Server error"}), 500
         Answer().update_answer_preferred_option(id, 
         current_preferred_answer['id'], False)
         record = Answer().update_answer_preferred_option(id, 
