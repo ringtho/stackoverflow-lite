@@ -20,6 +20,19 @@ class TestQuestions():
     def teardown(cls):
         cls.db.empty_tables()
 
+    def get_user_token(self):
+        access_token = GetTokenTests().get_user_post()
+        token = "Bearer " + access_token
+        return token
+
+    def get_question_id(self):
+        token = self.get_user_token()
+        question = self.test_client.post('/questions', json=self.question, 
+        headers=dict(Authorization=token))
+        data = json.loads(question.data.decode('utf-8'))
+        question_id = data['data']['id']
+        return question_id
+
     def test_get_questions_empty_db(self):
         response = self.test_client.get('/questions')
         res = json.loads(response.data.decode('utf-8'))
@@ -29,7 +42,8 @@ class TestQuestions():
         assert response.status_code == 404
 
     def test_get_question_empty_db(self):
-        response = self.test_client.get('/questions/1')
+        question_id = 1
+        response = self.test_client.get(f'/questions/{question_id}')
         res = json.loads(response.data.decode('utf-8'))
         assert type(res) is dict
         assert 'error' in res
@@ -37,8 +51,7 @@ class TestQuestions():
         assert response.status_code == 404
 
     def test_post_question(self):
-        access_token = GetTokenTests().get_user_post()
-        token = "Bearer " + access_token
+        token = self.get_user_token()
         response = self.test_client.post('/questions', json=self.question, 
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
@@ -57,13 +70,7 @@ class TestQuestions():
         assert response.status_code == 200
 
     def test_get_single_question(self):
-        access_token = GetTokenTests().get_user_post()
-        token = "Bearer " + access_token
-        question = self.test_client.post('/questions', json=self.question, 
-        headers=dict(Authorization=token))
-        data = json.loads(question.data.decode('utf-8'))
-        question_id = data['data']['id']
-
+        question_id = self.get_question_id()
         response = self.test_client.get(f'/questions/{question_id}')
         res = json.loads(response.data.decode('utf-8'))
         assert type(res['answers']) is list
@@ -71,13 +78,18 @@ class TestQuestions():
         assert res['question']['title'] == "Autocommit in psycopg2"
         assert response.status_code == 200
 
+    def test_get_single_question_missing(self):
+        question_id = 11011
+        response = self.test_client.get(f'/questions/{question_id}')
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'error' in res
+        assert res['error'] == "Question not found"
+        assert response.status_code == 404
+
     def test_delete_question(self):
-        access_token = GetTokenTests().get_user_post()
-        token = "Bearer " + access_token
-        question = self.test_client.post('/questions', json=self.question, 
-        headers=dict(Authorization=token))
-        data = json.loads(question.data.decode('utf-8'))
-        question_id = data['data']['id']
+        question_id = self.get_question_id()
+        token = self.get_user_token()
         response = self.test_client.delete(f'/questions/{question_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
@@ -86,14 +98,20 @@ class TestQuestions():
         assert res['success']=="Question successfully deleted"
         assert response.status_code == 200
 
-    def test_update_question(self):
-        access_token = GetTokenTests().get_user_post()
-        token = "Bearer " + access_token
-        question = self.test_client.post('/questions', json=self.question, 
+    def test_delete_question_missing_question(self):
+        question_id = 11101
+        token = self.get_user_token()
+        response = self.test_client.delete(f'/questions/{question_id}',
         headers=dict(Authorization=token))
-        data = json.loads(question.data.decode('utf-8'))
-        question_id = data['data']['id']
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'error' in res
+        assert res['error']=="Question not found"
+        assert response.status_code == 404
 
+    def test_update_question(self):
+        question_id = self.get_question_id()
+        token = self.get_user_token()
         response = self.test_client.put(f'/questions/{question_id}', 
         json=self.question, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
@@ -101,6 +119,29 @@ class TestQuestions():
         assert 'success' in res
         assert res['success']=="Question successfully updated"
         assert response.status_code == 200
+
+    def test_update_question_missing_question(self):
+        question_id = 11101
+        token = self.get_user_token()
+        response = self.test_client.put(f'/questions/{question_id}', 
+        json=self.question, headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'error' in res
+        assert res['error']=="Question not found"
+        assert response.status_code == 404
+
+    def test_update_question_missing_token(self):
+        question_id = self.get_question_id()
+        token = ""
+        response = self.test_client.put(f'/questions/{question_id}', 
+        json=self.question, headers=dict(Authorization=token))
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert 'error' in res
+        assert "Invalid token" in res['error']
+        assert response.status_code == 401
+
 
         
 
