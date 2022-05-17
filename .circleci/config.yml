@@ -5,7 +5,9 @@ orbs:
   python: circleci/python@1.5.0
 
 jobs:
-  build-and-test: 
+  build-and-test:
+    environment:
+      CC_TEST_REPORTER_ID: 3b3a7151bbc69bdf7ef9808abb4bf8cb69959782eec430f4d9ba650c6d84cff4 
 
     docker:
       - image: cimg/python:3.8.9
@@ -25,12 +27,16 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
+
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+          # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
       - run:
           name: Run tests
           command: pytest --cov=api --cov-report term-missing
-      - run: 
-          name: Upload coverage data to coveralls.io
-          command: coveralls
 
 workflows:
   sample: 
