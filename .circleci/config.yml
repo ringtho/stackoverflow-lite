@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: pytest --cov=stackoverflow --cov-report term-missing
-      - script: |
+      - run: |
           pip install coveralls
           export CIRCLE_BRANCH=api
           coveralls
