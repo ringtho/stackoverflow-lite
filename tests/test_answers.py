@@ -1,4 +1,3 @@
-from flask import jsonify
 import pytest
 import json
 from stackoverflow.routes import app
@@ -91,7 +90,6 @@ class TestAnswers():
         assert type(res) is dict
         assert res['error'] == 'You are not allowed to answer your own question'
         assert response.status_code == 403
-
 
     def test_get_answer(self):
         answer = self.get_answer_id()
