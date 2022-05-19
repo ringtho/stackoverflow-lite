@@ -7,7 +7,7 @@
 StackOverflow-lite is a platform where people can ask questions and provide answers.
 
 This StackOverflow-lite Api serves to create, edit, delete and retrieve questions and answers provided by other users.
-The endpoints are deployed at [iReporter Heroku](https://sringtho.herokuapp.com)
+The endpoints are deployed at [StackOverflow-lite Heroku](https://stackoverflow-lite-flask.herokuapp.com)
 
 # Features
 
@@ -26,7 +26,7 @@ A user can:
 - can view questions with the most answers
 
 ## API Description ##
-The StackOverflow-lite API is implemented in flask, a python microframework. Version 1 of the API is hosted on Heroku and can be accessed at https://sringtho.herokuapp.com.
+The StackOverflow-lite API is implemented in flask, a python microframework. Version 1 of the API is hosted on Heroku and can be accessed at [StackOverflow-lite Herokku](https://stackoverflow-lite-flask.herokuapp.com)
 The corresponding endpoints and their functionalities are described below
 
 |Endpoint                                       | Function                          
