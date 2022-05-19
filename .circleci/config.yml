@@ -28,15 +28,14 @@ jobs:
       - run:
           name: Run tests
           command: pytest --cov=stackoverflow --cov-report term-missing
-      # - script: |
-      #     pip install coveralls
-      #     export CIRCLE_BRANCH=$BUILD_SOURCEBRANCH
-      #     coveralls
-      #   displayName: 'coveralls'
-      #   env:
-      #   CIRCLECI: 1
-      #   CIRCLE_BUILD_NUM: $(Build.BuildNumber)
-      #   COVERALLS_REPO_TOKEN: $(coveralls_repo_token) 
+      - script: |
+          pip install coveralls
+          export CIRCLE_BRANCH=api
+          coveralls
+        displayName: 'coveralls'
+        env:
+          COVERALLS_REPO_TOKEN: czOtdIHPhvVVZcntgmCKzm0hlAcXyPOiq
+
 
 workflows:
   sample: 
