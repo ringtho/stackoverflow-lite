@@ -27,7 +27,16 @@ jobs:
           pkg-manager: pip
       - run:
           name: Run tests
-          command: pytest 
+          command: pytest
+      - script: |
+          pip install coveralls
+          export CIRCLE_BRANCH=$BUILD_SOURCEBRANCH
+          coveralls
+        displayName: 'coveralls'
+        env:
+        CIRCLECI: 1
+        CIRCLE_BUILD_NUM: $(Build.BuildNumber)
+        COVERALLS_REPO_TOKEN: $(coveralls_repo_token) 
 
 workflows:
   sample: 
