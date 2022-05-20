@@ -1,6 +1,6 @@
 # StackOverflow-lite 
 
-[![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite/tree/api.svg?style=shield)](https://circleci.com/gh/ringtho/stackoverflow-lite/?branch=api)  [![Maintainability](https://api.codeclimate.com/v1/badges/f8432418761ae69b0fe8/maintainability)](https://codeclimate.com/github/ringtho/stackoverflow-lite/maintainability)  <!-- [![Coverage Status](https://coveralls.io/repos/github/ringtho/stackoverflow-lite/badge.svg?branch=api)](https://coveralls.io/github/ringtho/stackoverflow-lite?branch=api) -->
+[![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite/tree/api.svg?style=shield)](https://circleci.com/gh/ringtho/stackoverflow-lite/?branch=api)  [![Maintainability](https://api.codeclimate.com/v1/badges/f8432418761ae69b0fe8/maintainability)](https://codeclimate.com/github/ringtho/stackoverflow-lite/maintainability)  [![Coverage Status](https://coveralls.io/repos/github/ringtho/stackoverflow-lite/badge.svg?branch=api)](https://coveralls.io/github/ringtho/stackoverflow-lite?branch=api) 
 
 
 ## Overview
