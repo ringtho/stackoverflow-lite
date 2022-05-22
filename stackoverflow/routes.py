@@ -69,8 +69,6 @@ def get_user_profile(username):
 @required_token
 def update_password(username):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     if current_user['username'] != username:
             return jsonify({"error": "You are not authorized!"}), 401
     data = request.get_json()
@@ -100,8 +98,6 @@ def get_questions():
 @required_token
 def add_question():
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
     validator = QuestionValidator(request)
     if validator.question_is_valid():
@@ -134,8 +130,6 @@ def get_question(id):
 @required_token
 def edit_question(id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
     validator = QuestionValidator(request)
     if not validator.question_is_valid():
@@ -150,8 +144,6 @@ def edit_question(id):
 @required_token
 def delete_question(id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     question = Question().delete_question_by_id(id, current_user['username'])
     if question:
         return jsonify({"success": "Question successfully deleted"})
@@ -161,8 +153,6 @@ def delete_question(id):
 @required_token
 def add_answer(id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
     question = Question().get_question_by_id(id)
     if question is None:
@@ -191,9 +181,6 @@ def add_answer(id):
 @app.route('/questions/<int:id>/answers/<int:answer_id>')
 @required_token
 def get_answer(id, answer_id):
-    current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
@@ -207,8 +194,6 @@ def get_answer(id, answer_id):
 @required_token
 def delete_answer(id,answer_id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
@@ -221,8 +206,6 @@ def delete_answer(id,answer_id):
 @required_token
 def update_answer_as_preferred(id, answer_id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
     question = Question().get_question_by_id(id)
     if question is None:
@@ -255,14 +238,11 @@ def update_answer_as_preferred(id, answer_id):
         if record > 0:
             return jsonify(message)
     return jsonify({"error": "You are not authorized"}), 401
-    
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
 @required_token
 def create_comment_on_answer(id, answer_id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
     question = Question().get_question_by_id(id)
     if question is None:
@@ -290,9 +270,6 @@ comment = '/questions/<int:id>/answers/<int:answer_id>/comments/<int:comment_id>
 @app.route(comment)
 @required_token
 def get_comment(id, answer_id, comment_id):
-    current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
@@ -306,8 +283,6 @@ def get_comment(id, answer_id, comment_id):
 @required_token
 def edit_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     data = request.get_json()
     question = Question().get_question_by_id(id)
     if question is None:
@@ -328,8 +303,6 @@ def edit_comment(id, answer_id, comment_id):
 @required_token
 def delete_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     question = Question().get_question_by_id(id)
     if question is None:
         return jsonify({"error" : "Question not found"}), 404
@@ -345,8 +318,6 @@ def delete_comment(id, answer_id, comment_id):
 @required_token
 def get_current_users_questions(username):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     if current_user['username'] == username:
         questions = Question().get_questions_by_author(current_user['username'])
         if questions:
