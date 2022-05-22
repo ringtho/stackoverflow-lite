@@ -3,11 +3,12 @@ from stackoverflow.resources.auth_token import get_username_from_token
 from stackoverflow.init_db import Database
 class User:
 
-    def create_user(self,username,email,firstname,lastname,gender,password):
+    def create_user(self, user, password):
         cur = Database().get_cursor()
         query =f"""
         INSERT INTO users (username,email,firstname,lastname,gender,password) 
-        VALUES ('{username}','{email}','{firstname}','{lastname}','{gender}','{password}')
+        VALUES ('{user['username']}','{user['email']}','{user['firstname']}',
+        '{user['lastname']}','{user['gender']}','{password}')
         """
         user = cur.execute(query)
         return user
@@ -25,7 +26,8 @@ class User:
     def get_user(self, username):
         cur = Database().get_cursor()
         query=f"""
-        SELECT username,email,firstname,lastname,gender FROM users WHERE username='{username}'
+        SELECT username,email,firstname,lastname,gender 
+        FROM users WHERE username='{username}'
         """
         cur.execute(query)
         user = cur.fetchone()

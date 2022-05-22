@@ -22,18 +22,17 @@ def signup():
     validator = UserValidator(request)
     if validator.validate_user_data():
         password = generate_password_hash(data['password'])
-        User().create_user(data['username'],data['email'],
-        data['firstname'],data['lastname'],data['gender'],password)
-        display_user = {
+        user = {
             "username": data["username"],
             "email": data["email"],
             "firstname": data["firstname"],
             "lastname": data["lastname"],
             "gender": data["gender"],
         }
+        User().create_user(user,password)        
         return jsonify({
             "success":"User created successfully", 
-            "user": display_user}), 201
+            "user": user}), 201
     return jsonify({"error": validator.error}), 400
     
 @app.route('/auth/login', methods=["POST"])
@@ -134,10 +133,20 @@ def edit_question(id):
     validator = QuestionValidator(request)
     if not validator.question_is_valid():
         return jsonify({"error": validator.error}), 400
-    record = Question().update_question(id,current_user['username'],
-    data['title'],data['description'],data['stack'])
+    question = {
+        "id": id,
+        "title": data['title'],
+        "description": data['description'],
+        "stack": data['stack'],
+        "author": current_user['username']
+    }
+    record = Question().update_question(question)
     if record > 0:
-        return jsonify({"success":"Question successfully updated"})
+        return jsonify(
+            {
+                "success":"Question successfully updated",
+                "data":question
+        })
     return jsonify({"error" : "Question not found"}), 404
 
 @app.route('/questions/<int:id>', methods=["DELETE"])

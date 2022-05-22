@@ -32,11 +32,12 @@ class Question:
         if question:
             return question  
 
-    def update_question(self,id,author,title,description,stack):
+    def update_question(self,question):
         cur = Database().get_cursor()
         query = f"""
-        UPDATE questions SET title='{title}', description='{description}', 
-        stack='{stack}' WHERE author='{author}' AND id='{id}'
+        UPDATE questions SET title='{question['title']}', 
+        description='{question['description']}', stack='{question['stack']}' 
+        WHERE author='{question['author']}' AND id='{question['id']}'
         """
         cur.execute(query)
         rows = cur.rowcount
