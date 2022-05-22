@@ -1,4 +1,5 @@
 
+from urllib import response
 import pytest
 import json
 from stackoverflow.routes import app
@@ -33,9 +34,19 @@ class TestQuestions():
         question_id = data['data']['id']
         return question_id
 
+    def test_hello_world(self):
+        response = self.test_client.get('/')
+        res = json.loads(response.data.decode('utf-8'))
+        assert type(res) is dict
+        assert response.content_type == 'application/json'
+        assert 'message' in res
+        assert res['message'] == "Hello World"
+        assert response.status_code == 200
+
     def test_get_questions_empty_db(self):
         response = self.test_client.get('/questions')
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error']=="No questions currently in the database"
@@ -45,6 +56,7 @@ class TestQuestions():
         question_id = 1
         response = self.test_client.get(f'/questions/{question_id}')
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error']=="Question not found"
@@ -55,6 +67,7 @@ class TestQuestions():
         response = self.test_client.post('/questions', json=self.question, 
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert res['data']['title'] == "Autocommit in psycopg2"
         assert res['success'] == "Successfully created a new question"
@@ -64,6 +77,7 @@ class TestQuestions():
         self.test_post_question()
         response = self.test_client.get('/questions')
         res = json.loads(response.data.decode('utf-8')).get('questions')
+        assert response.content_type == 'application/json'
         assert type(res) is list
         assert res[0]['author'] == 'user'
         assert type(res[0]) is dict
@@ -73,6 +87,7 @@ class TestQuestions():
         question_id = self.get_question_id()
         response = self.test_client.get(f'/questions/{question_id}')
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res['answers']) is list
         assert type(res) is dict
         assert res['question']['title'] == "Autocommit in psycopg2"
@@ -82,6 +97,7 @@ class TestQuestions():
         question_id = 11011
         response = self.test_client.get(f'/questions/{question_id}')
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "Question not found"
@@ -93,6 +109,7 @@ class TestQuestions():
         response = self.test_client.delete(f'/questions/{question_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'success' in res
         assert res['success']=="Question successfully deleted"
@@ -104,6 +121,7 @@ class TestQuestions():
         response = self.test_client.delete(f'/questions/{question_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error']=="Question not found"
@@ -115,6 +133,7 @@ class TestQuestions():
         response = self.test_client.put(f'/questions/{question_id}', 
         json=self.question, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'success' in res
         assert res['success']=="Question successfully updated"
@@ -126,6 +145,7 @@ class TestQuestions():
         response = self.test_client.put(f'/questions/{question_id}', 
         json=self.question, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error']=="Question not found"
@@ -137,6 +157,7 @@ class TestQuestions():
         response = self.test_client.put(f'/questions/{question_id}', 
         json=self.question, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert "Invalid token" in res['error']
@@ -150,6 +171,7 @@ class TestQuestions():
         response = self.test_client.get(f'/questions/{username}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'questions' in res
         assert 'title' in res['questions'][0]
@@ -162,6 +184,7 @@ class TestQuestions():
         response = self.test_client.get(f'/questions/{username}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error']=="Questions not found"
@@ -174,6 +197,7 @@ class TestQuestions():
         response = self.test_client.get(f'/questions/{username}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error']=="You are not authorised"

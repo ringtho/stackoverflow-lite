@@ -77,6 +77,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments',
         json=self.comment, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'answer' in res
         assert 'comment' in res
         assert res['comment'][0]['author'] == "user"
@@ -91,6 +92,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments',
         json=self.comment, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Question not found"
         assert response.status_code == 404
@@ -104,6 +106,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments',
         json=self.comment, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Answer not found"
         assert response.status_code == 404
@@ -118,6 +121,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'answer' in res
         assert 'comment' in res
         assert res['comment']['id'] == comment_id
@@ -133,6 +137,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Answer not found"
         assert response.status_code == 404
@@ -147,6 +152,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Question not found"
         assert response.status_code == 404
@@ -161,6 +167,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'success' in res
         assert res['success'] == "Comment successfully deleted"
         assert response.status_code == 200
@@ -175,6 +182,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Question not found"
         assert response.status_code == 404
@@ -189,6 +197,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Answer not found"
         assert response.status_code == 404
@@ -203,6 +212,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Comment not found"
         assert response.status_code == 404
@@ -217,6 +227,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token),json=self.comment)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'success' in res
         assert res['success'] == "Comment successfully updated"
         assert response.status_code == 200
@@ -231,6 +242,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token),json=self.comment)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Question not found"
         assert response.status_code == 404
@@ -245,6 +257,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token),json=self.comment)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Answer not found"
         assert response.status_code == 404
@@ -259,6 +272,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}/comments/{comment_id}',
         headers=dict(Authorization=token),json=self.comment)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert res['error'] == "Comment not found"
         assert response.status_code == 404

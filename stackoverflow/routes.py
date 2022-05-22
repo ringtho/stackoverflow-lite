@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return jsonify({"message": "hello World"})
+    return jsonify({"message": "Hello World"})
 
 @app.route('/auth/signup', methods=["POST"])
 def signup():

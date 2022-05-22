@@ -59,6 +59,7 @@ class TestAnswers():
         response = self.test_client.post(f'/questions/{question_id}/answers',
         json=self.answer, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'success' in res
         assert type(res) is dict
         assert 'answer' in res['data']
@@ -74,6 +75,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers',
         json=self.answer, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert type(res) is dict
         assert res['error'] == 'Question not found'
@@ -86,6 +88,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers',
         json=self.answer, headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert 'error' in res
         assert type(res) is dict
         assert res['error'] == 'You are not allowed to answer your own question'
@@ -100,6 +103,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'answer' in res
         assert response.status_code == 200
@@ -113,6 +117,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'message' in res
         assert res['message'] == "Answer successfully deleted"
@@ -127,6 +132,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "Answer not found"
@@ -139,6 +145,7 @@ class TestAnswers():
         response = self.test_client.delete(
             f'/questions/{question_id}/answers/{answer_id}')
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "Invalid token. Please provide a valid token"
@@ -153,6 +160,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "Question not found"
@@ -167,6 +175,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token), json=self.preferred)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'success' in res
         assert 'answer' in res
@@ -182,6 +191,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token), json=self.preferred)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "You are not authorized"
@@ -196,6 +206,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token), json=self.preferred)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "Question not found"
@@ -210,6 +221,7 @@ class TestAnswers():
             f'/questions/{question_id}/answers/{answer_id}',
         headers=dict(Authorization=token), json=self.preferred)
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'error' in res
         assert res['error'] == "Answer not found"

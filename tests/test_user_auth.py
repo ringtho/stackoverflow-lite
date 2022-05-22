@@ -55,6 +55,7 @@ class TestUsers():
     def test_create_user(self):
         response = self.test_client.post("/auth/signup",json=self.user)
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'success' in data
         assert 'user' in data
@@ -65,6 +66,7 @@ class TestUsers():
         self.test_create_user()
         response = self.test_client.post("/auth/signup",json=self.user)
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert data['error'] == "User with username 'user' already exists"
@@ -75,7 +77,7 @@ class TestUsers():
         response = self.test_client.get("/auth/profile/user", 
         headers={"Authorization":token})
         data = json.loads(response.data.decode('utf-8'))
-        print(data)
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'username' in data
         assert data['username']=="user"
@@ -86,7 +88,7 @@ class TestUsers():
         response = self.test_client.get("/auth/profile/abc", 
         headers={"Authorization":token})
         data = json.loads(response.data.decode('utf-8'))
-        print(data)
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert data['error']=="User not found!"
@@ -98,7 +100,7 @@ class TestUsers():
         response = self.test_client.get("/auth/profile/user", 
         headers={"Authorization":token})
         data = json.loads(response.data.decode('utf-8'))
-        print(data)
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert data['error']=="You are not authorized!"
@@ -108,6 +110,7 @@ class TestUsers():
         self.test_create_user()
         response = self.test_client.post("/auth/login",json=self.login)
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'access_token' in data
         assert 'username' in data
@@ -118,6 +121,7 @@ class TestUsers():
         self.test_create_user()
         response = self.test_client.post("/auth/login",json=self.login_2)
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert 'username' not in data
@@ -131,6 +135,7 @@ class TestUsers():
         response = self.test_client.put(f"/auth/profile/{username}",
         json=self.password, headers=dict(Authorization=token))
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'success' in data
         assert data['success'] == "Password successfully updated"
@@ -143,6 +148,7 @@ class TestUsers():
         response = self.test_client.put(f"/auth/profile/{username}",
         json=self.password_same, headers=dict(Authorization=token))
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert data['error'] == "The new password cannot be the same as the old password"
@@ -155,6 +161,7 @@ class TestUsers():
         response = self.test_client.put(f"/auth/profile/{username}",
         json=self.password_old_incorrect, headers=dict(Authorization=token))
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert data['error'] == "Incorrect old password!"
@@ -167,6 +174,7 @@ class TestUsers():
         response = self.test_client.put(f"/auth/profile/{username}",
         json=self.password, headers=dict(Authorization=token))
         data = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(data) is dict
         assert 'error' in data
         assert data['error'] == "You are not authorized!"

@@ -35,6 +35,7 @@ class TestAuthToken():
     #     response = self.test_client.post('/questions', json=self.question, 
     #     headers=dict(Authorization=token))
     #     res = json.loads(response.data.decode('utf-8'))
+    #     assert response.content_type == 'application/json'
     #     assert type(res) is dict
     #     assert res['error'] == "Token has expired!!"
     #     assert response.status_code == 401
@@ -44,6 +45,7 @@ class TestAuthToken():
         response = self.test_client.post('/questions', json=self.question, 
         headers=dict(Authorization=token))
         res = json.loads(response.data.decode('utf-8'))
+        assert response.content_type == 'application/json'
         assert type(res) is dict
         assert res['error'] == "Invalid token. Please provide a valid token"
         assert response.status_code == 401

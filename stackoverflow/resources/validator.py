@@ -124,7 +124,7 @@ class UserValidator:
         assert pattern.match(email.strip()), 'Invalid Email Address!'
 
     def validate_password(self, password):
-        assert isinstance(password, str), 'Password must be a string!'
+        assert isinstance(password, str), 'Password should be a string'
         check_password = {
         'a-z': str.islower, 
         'A-Z': str.isupper, 
