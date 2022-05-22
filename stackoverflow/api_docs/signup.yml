@@ -1,0 +1,43 @@
+summary : "Register new User"
+description : "This is a simple api to register a new user using the provided user details"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of user details"
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      user:
+        type: "object"
+    example: {
+                "username":"user",
+                "email":"user@gmail.com",
+                "firstname": "user",
+                "lastname": "user",
+                "gender": "male",
+                "password":"abcdef"
+              }
+ 
+responses:
+  201:
+    description: "User Created Successfully"
+    schema:
+      type: "object"
+      properties:
+        success:
+          type: "string"
+        user:
+          type: "object"
+
+  400:
+    description: "Validation Error"
+    schema:
+      type: "object"
+      properties:
+        error:
+          type: "string"

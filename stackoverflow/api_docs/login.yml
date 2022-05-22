@@ -1,0 +1,49 @@
+summary : "Login User"
+description : "This is a simple api to login a user using the username and password provided"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of a username and password "
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      user:
+        type: "object"
+    example: {
+                "username":"user",
+                "password":"abcdef"
+              }
+ 
+responses:
+  200:
+    description: "User successfully logged in"
+    schema:
+      type: "object"
+      properties:
+        access_token:
+          type: "string"
+        username:
+          type: "string"
+        email:
+          type: "string"
+
+  400:
+    description: "Validation Error"
+    schema:
+      type: "object"
+      properties:
+        error:
+          type: "string"
+
+  404:
+    description: "Invalid credentials"
+    schema:
+      type: "object"
+      properties:
+        error:
+          type: "string"

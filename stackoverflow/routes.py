@@ -7,16 +7,36 @@ from stackoverflow.models.user import User
 from stackoverflow.models.question import Question
 from stackoverflow.models.answer import Answer
 from stackoverflow.models.comment import Comment
+from flasgger import Swagger
+from flasgger.utils import swag_from
 
 
+2
+3
+4
+5
+SWAGGER_TEMPLATE = {
+   "securityDefinitions": 
+   {
+       "APIKeyHeader": 
+        {
+            "type": "apiKey", 
+            "name": "bearer-token", 
+            "in": "header"
+        }
+    }
+    }
 
 app = Flask(__name__)
+swagger = Swagger(app, template=SWAGGER_TEMPLATE)
 
 @app.route('/')
+@swag_from('api_docs/hello_world.yml')
 def hello():
     return jsonify({"message": "Hello World"})
 
 @app.route('/auth/signup', methods=["POST"])
+@swag_from('api_docs/signup.yml')
 def signup():
     data = request.get_json()
     validator = UserValidator(request)
@@ -36,6 +56,7 @@ def signup():
     return jsonify({"error": validator.error}), 400
     
 @app.route('/auth/login', methods=["POST"])
+@swag_from('api_docs/login.yml')
 def login():
     data = request.get_json()
     validator = LoginValidator(request)
@@ -53,6 +74,7 @@ def login():
 
 @app.route('/auth/profile/<string:username>')
 @required_token
+@swag_from('api_docs/get_user.yml')
 def get_user_profile(username):
     current_user = User().get_current_user_from_token()
     if current_user is None:
@@ -87,6 +109,7 @@ def update_password(username):
     return jsonify({"error": validator.error}), 400
 
 @app.route('/questions')
+@swag_from('api_docs/get_questions.yml')
 def get_questions():
     questions = Question().get_questions()
     if questions:
