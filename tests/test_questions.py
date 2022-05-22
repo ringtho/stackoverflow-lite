@@ -136,7 +136,9 @@ class TestQuestions():
         assert response.content_type == 'application/json'
         assert type(res) is dict
         assert 'success' in res
+        assert 'data' in res
         assert res['success']=="Question successfully updated"
+        assert res['data']['author'] == 'user'
         assert response.status_code == 200
 
     def test_update_question_missing_question(self):
