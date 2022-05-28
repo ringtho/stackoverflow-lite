@@ -4,8 +4,6 @@ produces :
 - "application/json"
 consumes : 
 - "application/json"
-security:
-- bearerAuth: []
 parameters :
 - in: "path"
   name: "username"

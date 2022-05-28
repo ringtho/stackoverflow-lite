@@ -7,21 +7,9 @@ from stackoverflow.models.user import User
 from stackoverflow.models.question import Question
 from stackoverflow.models.answer import Answer
 from stackoverflow.models.comment import Comment
+from stackoverflow.api_docs.swagger_template import SWAGGER_TEMPLATE
 from flasgger import Swagger
 from flasgger.utils import swag_from
-
-
-SWAGGER_TEMPLATE = {
-   "securityDefinitions": 
-   {
-       "APIKeyHeader": 
-        {
-            "type": "apiKey", 
-            "name": "bearer-token", 
-            "in": "header"
-        }
-    }
-    }
 
 app = Flask(__name__)
 swagger = Swagger(app, template=SWAGGER_TEMPLATE)
