@@ -39,7 +39,12 @@ The corresponding endpoints and their functionalities are described below
 |DELETE /questions/<question_id>                    | deletes a question based on it's id
 |POST /questions/<question_id>/answers              | adds a answer to a particular question
 |PUT /questions/<question_id>/answers/<answer_id>   | marks an answer as preferred
+|GET /questions/<question_id>/answers/<answer_id>   | retrieves a particular answer to a question
+|DELETE /questions/<question_id>/answers/<answer_id> | deletes an answer based on it's id
 |POST /questions/<question_id>/answers/<answer_id>/comments | adds a comment to an answer
+|GET /questions/<question_id>/answers/<answer_id>/comments/<comment_id> | retrieves a particular comment
+|PUT /questions/<question_id>/answers/<answer_id>/comments/<comment_id> | edits a comment based on it's id
+|DELETE /questions/<question_id>/answers/<answer_id>/comments/<comment_id> | deletes a particular comment
 
 ## Installation Instructions
 To run the API, follow these steps:
