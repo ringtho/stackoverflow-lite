@@ -211,7 +211,7 @@ def add_answer(id):
     return jsonify({'error': "You are not allowed to answer your own question"}), 403
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>')
-# @required_token
+@required_token
 @swag_from('api_docs/answers/get_answer.yml')
 def get_answer(id, answer_id):
     question = Question().get_question_by_id(id)
@@ -305,6 +305,7 @@ def create_comment_on_answer(id, answer_id):
 comment = '/questions/<int:id>/answers/<int:answer_id>/comments/<int:comment_id>'
 @app.route(comment)
 @required_token
+@swag_from('api_docs/comments/get_comment.yml')
 def get_comment(id, answer_id, comment_id):
     question = Question().get_question_by_id(id)
     if question is None:
@@ -317,6 +318,7 @@ def get_comment(id, answer_id, comment_id):
 
 @app.route(comment, methods=['PUT'])
 @required_token
+@swag_from('api_docs/comments/edit_comment.yml')
 def edit_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -337,6 +339,7 @@ def edit_comment(id, answer_id, comment_id):
 
 @app.route(comment, methods=['DELETE'])
 @required_token
+@swag_from('api_docs/comments/delete_comment.yml')
 def delete_comment(id, answer_id, comment_id):
     current_user = User().get_current_user_from_token()
     question = Question().get_question_by_id(id)
@@ -352,7 +355,8 @@ def delete_comment(id, answer_id, comment_id):
 
 @app.route('/questions/<string:username>')
 @required_token
-def get_current_users_questions(username):
+@swag_from('api_docs/questions/get_user_questions.yml')
+def get_current_user_questions(username):
     current_user = User().get_current_user_from_token()
     if current_user['username'] == username:
         questions = Question().get_questions_by_author(current_user['username'])

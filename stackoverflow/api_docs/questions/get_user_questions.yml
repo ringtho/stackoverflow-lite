@@ -1,0 +1,20 @@
+summary : "Return all Questions for User"
+description : "This is a simple api to return the questions asked by a particular user"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+tags: 
+- "questions"
+parameters:
+- in: "path"
+  name: "username"
+  required: "true"
+
+ 
+responses:
+  200:
+    description: "SUCCESS"
+
+  404:
+    description: "NOTFOUND"

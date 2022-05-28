@@ -1,0 +1,25 @@
+summary : "Return a comment"
+description : "This is a simple api to return a particular comment to an answer"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+- in: "path"
+  name: "answer_id"
+  required: "true"
+- in: "path"
+  name: "comment_id"
+  required: "true"
+tags: 
+- "comments"
+
+responses:
+  200:
+    description: "SUCCESS"
+
+  404:
+    description: "NOTFOUND"

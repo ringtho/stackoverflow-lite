@@ -24,14 +24,7 @@ tags:
 
 responses:
   201:
-    description: "SUCCESS"
-    schema:
-      type: "object"
-      properties:
-        success:
-          type: "string"
-        question:
-          type: "object"
+    description: "CREATED"
 
   400:
     description: "VALIDATION ERROR"

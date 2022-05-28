@@ -28,7 +28,7 @@ tags:
  
 responses:
   201:
-    description: "SUCCESS"
+    description: "CREATED"
 
   400:
     description: "VALIDATION ERROR"
