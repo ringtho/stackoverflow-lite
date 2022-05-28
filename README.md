@@ -34,20 +34,11 @@ The corresponding endpoints and their functionalities are described below
 |POST /questions                                    | adds a question to the database(list)
 |GET /questions                                     | retrieves all questions stored in the database
 |GET /questions/<question_id>                       | retrives a particular question based on its id
+|GET /questions/<username>                          | retrieves all questions of a particular author
 |PUT /questions/<question_id>                       | edits a unique question based on it's id 
 |DELETE /questions/<question_id>                    | deletes a question based on it's id
 |POST /questions/<question_id>/answers              | adds a answer to a particular question
 |PUT /questions/<question_id>/answers/<answer_id>   | marks an answer as preferred
-
-When using the API and example of the input data for creating a question is shown below:
-```javascript
-{
-    "id": 2,
-    "question": "Django Rest Framework",
-    "description": "Whenever I am logging in I get an error that affects my applicati",
-    "stack": "Django, Python"
-}
-```
 
 ## Installation Instructions
 To run the API, follow these steps:
@@ -68,6 +59,7 @@ $ pip install -r requirements.txt
 $ python app.py
 ```
 * Test the API endpoints using Postman
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/6160484-8d07d5c1-730d-4786-b12f-ace574dfea7d?action=collection%2Ffork&collection-url=entityId%3D6160484-8d07d5c1-730d-4786-b12f-ace574dfea7d%26entityType%3Dcollection%26workspaceId%3Db626a45c-b310-423e-9f53-cc578f23bb7d)
 
 ## Contributors
 * Ringtho Smith - *sringtho@gmail.com*
