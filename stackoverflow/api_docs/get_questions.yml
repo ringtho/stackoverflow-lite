@@ -4,10 +4,12 @@ produces :
 - "application/json"
 consumes : 
 - "application/json"
+tags: 
+- "questions"
  
 responses:
   200:
-    description: "Success"
+    description: "SUCCESS"
 
   404:
-    description: "Not Found"
+    description: "NOTFOUND"

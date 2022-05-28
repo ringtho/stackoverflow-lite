@@ -11,10 +11,6 @@ from flasgger import Swagger
 from flasgger.utils import swag_from
 
 
-2
-3
-4
-5
 SWAGGER_TEMPLATE = {
    "securityDefinitions": 
    {
@@ -77,8 +73,6 @@ def login():
 @swag_from('api_docs/get_user.yml')
 def get_user_profile(username):
     current_user = User().get_current_user_from_token()
-    if current_user is None:
-        return jsonify({"error":"Please provide a token to continue"}), 401
     user = User().get_user(username)
     if not user:
         return jsonify({"error":"User not found!"}), 404
@@ -88,6 +82,7 @@ def get_user_profile(username):
 
 @app.route('/auth/profile/<string:username>', methods=["PUT"])
 @required_token
+@swag_from('api_docs/edit_password.yml')
 def update_password(username):
     current_user = User().get_current_user_from_token()
     if current_user['username'] != username:
@@ -118,6 +113,7 @@ def get_questions():
 
 @app.route('/questions', methods=["POST"])
 @required_token
+@swag_from('api_docs/add_question.yml')
 def add_question():
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -138,6 +134,7 @@ def add_question():
     return jsonify({"error": validator.error}), 400
 
 @app.route('/questions/<int:id>')
+@swag_from('api_docs/get_question.yml')
 def get_question(id):
     question = Question().get_question_by_id(id)
     if question:
@@ -150,6 +147,7 @@ def get_question(id):
 
 @app.route('/questions/<int:id>', methods=["PUT"])
 @required_token
+@swag_from('api_docs/edit_question.yml')
 def edit_question(id):
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -174,6 +172,7 @@ def edit_question(id):
 
 @app.route('/questions/<int:id>', methods=["DELETE"])
 @required_token
+@swag_from('api_docs/delete_question.yml')
 def delete_question(id):
     current_user = User().get_current_user_from_token()
     question = Question().delete_question_by_id(id, current_user['username'])

@@ -22,10 +22,12 @@ parameters :
                 "gender": "male",
                 "password":"abcdef"
               }
- 
+tags:
+- "auth"
+
 responses:
   201:
-    description: "User Created Successfully"
+    description: "SUCCESS"
     schema:
       type: "object"
       properties:
@@ -35,9 +37,5 @@ responses:
           type: "object"
 
   400:
-    description: "Validation Error"
-    schema:
-      type: "object"
-      properties:
-        error:
-          type: "string"
+    description: "VALIDATION ERROR"
+

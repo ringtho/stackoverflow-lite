@@ -10,10 +10,12 @@ parameters :
 - in: "path"
   name: "username"
   required: "true"
+tags:
+- "auth"
  
 responses:
   200:
-    description: "User Profile"
+    description: "SUCCESS"
     schema:
       type: "object"
       properties:
@@ -29,9 +31,4 @@ responses:
           type: "string"
 
   400:
-    description: "Validation Error"
-    schema:
-      type: "object"
-      properties:
-        error:
-          type: "string"
+    description: "VALIDATION ERROR"

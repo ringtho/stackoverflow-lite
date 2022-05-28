@@ -18,10 +18,12 @@ parameters :
                 "username":"user",
                 "password":"abcdef"
               }
- 
+tags:
+- "auth"
+
 responses:
   200:
-    description: "User successfully logged in"
+    description: "SUCCESS"
     schema:
       type: "object"
       properties:
@@ -33,17 +35,8 @@ responses:
           type: "string"
 
   400:
-    description: "Validation Error"
-    schema:
-      type: "object"
-      properties:
-        error:
-          type: "string"
+    description: "VALIDATION ERROR"
 
   404:
-    description: "Invalid credentials"
-    schema:
-      type: "object"
-      properties:
-        error:
-          type: "string"
+    description: "NOTFOUND"
+

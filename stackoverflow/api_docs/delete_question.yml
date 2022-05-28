@@ -1,5 +1,5 @@
-summary : "Return a Question"
-description : "This is a simple api to return a particular question by question id"
+summary : "Delete a Question"
+description : "This is a simple api to delete a question"
 produces : 
 - "application/json"
 consumes : 
@@ -17,3 +17,6 @@ responses:
 
   404:
     description: "NOTFOUND"
+
+  401:
+    description: "UNAUTHORIZED"

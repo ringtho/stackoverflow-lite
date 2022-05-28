@@ -1,0 +1,41 @@
+summary : "Add a new Question"
+description : "This is a simple api to add a new question"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of question details"
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      question:
+        type: "object"
+    example: {
+                "title": "Autocommit in Postgresql",
+                "description": "Does Autocommit also close the connection after?",
+                "stack": "SQL, Postgresql"
+              }
+tags: 
+- "questions"
+ 
+responses:
+  201:
+    description: "success"
+    schema:
+      type: "object"
+      properties:
+        success:
+          type: "string"
+        question:
+          type: "object"
+
+  400:
+    description: "VALIDATION ERROR"
+
+  401:
+    description: "UNAUTHORIZED"
+

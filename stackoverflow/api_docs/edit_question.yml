@@ -1,0 +1,39 @@
+summary : "Edit a Question"
+description : "This is a simple api to edit a question"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of question details"
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      question:
+        type: "object"
+    example: {
+                "title": "I think we try React or Angular",
+                "description": "I need to learn more javscript",
+                "stack": "React, Angular, JS"
+              }
+tags: 
+- "questions"
+ 
+responses:
+  200:
+    description: "SUCCESS"
+
+  400:
+    description: "VALIDATION ERROR"
+
+  404:
+    description: "NOTFOUND"
+
+  401:
+    description: "UNAUTHORIZED"
