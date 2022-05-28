@@ -7,7 +7,7 @@
 StackOverflow-lite is a platform where people can ask questions and provide answers.
 
 This StackOverflow-lite Api serves to create, edit, delete and retrieve questions and answers provided by other users.
-The endpoints are deployed at [StackOverflow-lite Heroku](https://stackoverflow-lite-flask.herokuapp.com)
+The endpoints are deployed at [StackOverflow-lite Heroku](https://stackoverflow-lite-flask.herokuapp.com/apidocs)
 
 # Features
 
