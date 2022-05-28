@@ -64,6 +64,8 @@ $ pip install -r requirements.txt
 ```
 $ python app.py
 ```
+* Use the link below to fork the app on postman.
+
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/6160484-8d07d5c1-730d-4786-b12f-ace574dfea7d?action=collection%2Ffork&collection-url=entityId%3D6160484-8d07d5c1-730d-4786-b12f-ace574dfea7d%26entityType%3Dcollection%26workspaceId%3Db626a45c-b310-423e-9f53-cc578f23bb7d)
 
 ## Contributors
