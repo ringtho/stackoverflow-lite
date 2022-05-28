@@ -32,7 +32,7 @@ def hello():
     return jsonify({"message": "Hello World"})
 
 @app.route('/auth/signup', methods=["POST"])
-@swag_from('api_docs/signup.yml')
+@swag_from('api_docs/auth/signup.yml')
 def signup():
     data = request.get_json()
     validator = UserValidator(request)
@@ -52,7 +52,7 @@ def signup():
     return jsonify({"error": validator.error}), 400
     
 @app.route('/auth/login', methods=["POST"])
-@swag_from('api_docs/login.yml')
+@swag_from('api_docs/auth/login.yml')
 def login():
     data = request.get_json()
     validator = LoginValidator(request)
@@ -70,7 +70,7 @@ def login():
 
 @app.route('/auth/profile/<string:username>')
 @required_token
-@swag_from('api_docs/get_user.yml')
+@swag_from('api_docs/auth/get_user.yml')
 def get_user_profile(username):
     current_user = User().get_current_user_from_token()
     user = User().get_user(username)
@@ -82,7 +82,7 @@ def get_user_profile(username):
 
 @app.route('/auth/profile/<string:username>', methods=["PUT"])
 @required_token
-@swag_from('api_docs/edit_password.yml')
+@swag_from('api_docs/auth/edit_password.yml')
 def update_password(username):
     current_user = User().get_current_user_from_token()
     if current_user['username'] != username:
@@ -104,7 +104,7 @@ def update_password(username):
     return jsonify({"error": validator.error}), 400
 
 @app.route('/questions')
-@swag_from('api_docs/get_questions.yml')
+@swag_from('api_docs/questions/get_questions.yml')
 def get_questions():
     questions = Question().get_questions()
     if questions:
@@ -113,7 +113,7 @@ def get_questions():
 
 @app.route('/questions', methods=["POST"])
 @required_token
-@swag_from('api_docs/add_question.yml')
+@swag_from('api_docs/questions/add_question.yml')
 def add_question():
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -134,7 +134,7 @@ def add_question():
     return jsonify({"error": validator.error}), 400
 
 @app.route('/questions/<int:id>')
-@swag_from('api_docs/get_question.yml')
+@swag_from('api_docs/questions/get_question.yml')
 def get_question(id):
     question = Question().get_question_by_id(id)
     if question:
@@ -147,7 +147,7 @@ def get_question(id):
 
 @app.route('/questions/<int:id>', methods=["PUT"])
 @required_token
-@swag_from('api_docs/edit_question.yml')
+@swag_from('api_docs/questions/edit_question.yml')
 def edit_question(id):
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -172,7 +172,7 @@ def edit_question(id):
 
 @app.route('/questions/<int:id>', methods=["DELETE"])
 @required_token
-@swag_from('api_docs/delete_question.yml')
+@swag_from('api_docs/questions/delete_question.yml')
 def delete_question(id):
     current_user = User().get_current_user_from_token()
     question = Question().delete_question_by_id(id, current_user['username'])
@@ -182,6 +182,7 @@ def delete_question(id):
 
 @app.route('/questions/<int:id>/answers', methods=["POST"])
 @required_token
+@swag_from('api_docs/answers/add_answer.yml')
 def add_answer(id):
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -210,7 +211,8 @@ def add_answer(id):
     return jsonify({'error': "You are not allowed to answer your own question"}), 403
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>')
-@required_token
+# @required_token
+@swag_from('api_docs/answers/get_answer.yml')
 def get_answer(id, answer_id):
     question = Question().get_question_by_id(id)
     if question is None:
@@ -223,6 +225,7 @@ def get_answer(id, answer_id):
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["DELETE"])
 @required_token
+@swag_from('api_docs/answers/delete_answer.yml')
 def delete_answer(id,answer_id):
     current_user = User().get_current_user_from_token()
     question = Question().get_question_by_id(id)
@@ -235,6 +238,7 @@ def delete_answer(id,answer_id):
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>', methods=["PUT"])
 @required_token
+@swag_from('api_docs/answers/edit_answer_preference.yml')
 def update_answer_as_preferred(id, answer_id):
     current_user = User().get_current_user_from_token()
     data = request.get_json()
@@ -272,6 +276,7 @@ def update_answer_as_preferred(id, answer_id):
 
 @app.route('/questions/<int:id>/answers/<int:answer_id>/comments', methods=["POST"])
 @required_token
+@swag_from('api_docs/comments/add_comment.yml')
 def create_comment_on_answer(id, answer_id):
     current_user = User().get_current_user_from_token()
     data = request.get_json()

@@ -21,10 +21,10 @@ parameters :
               }
 tags: 
 - "questions"
- 
+
 responses:
   201:
-    description: "success"
+    description: "SUCCESS"
     schema:
       type: "object"
       properties:
