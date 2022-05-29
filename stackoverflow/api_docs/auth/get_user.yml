@@ -1,0 +1,32 @@
+summary : "Return User Profile"
+description : "This is a simple api to return the details of the user profile"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "username"
+  required: "true"
+tags:
+- "auth"
+ 
+responses:
+  200:
+    description: "SUCCESS"
+    schema:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        firstname:
+          type: "string"
+        gender:
+          type: "string"
+        lastname:
+          type: "string"
+        username:
+          type: "string"
+
+  400:
+    description: "VALIDATION ERROR"

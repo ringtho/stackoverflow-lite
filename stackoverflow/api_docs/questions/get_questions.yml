@@ -1,0 +1,15 @@
+summary : "Return all Questions"
+description : "This is a simple api to return the questions asked by all users"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+tags: 
+- "questions"
+ 
+responses:
+  200:
+    description: "SUCCESS"
+
+  404:
+    description: "NOTFOUND"

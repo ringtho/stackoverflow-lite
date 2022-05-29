@@ -1,0 +1,40 @@
+summary : "Update an Answer as preferred"
+description : "This is a simple api to enable the question author make an answer the preferred solution"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+- in: "path"
+  name: "answer_id"
+  required: "true"
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of answer preference details"
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      answer:
+        type: "object"
+    example: {
+                "preferred": true
+              }
+tags: 
+- "answers"
+ 
+responses:
+  200:
+    description: "SUCCESS"
+
+  400:
+    description: "VALIDATION ERROR"
+
+  404:
+    description: "NOTFOUND"
+
+  401:
+    description: "UNAUTHORIZED"
