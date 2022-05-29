@@ -1,6 +1,5 @@
 # StackOverflow-lite 
 
-<<<<<<< HEAD
 [![CircleCI](https://circleci.com/gh/ringtho/stackoverflow-lite/tree/api.svg?style=shield)](https://circleci.com/gh/ringtho/stackoverflow-lite/?branch=api)  [![Maintainability](https://api.codeclimate.com/v1/badges/f8432418761ae69b0fe8/maintainability)](https://codeclimate.com/github/ringtho/stackoverflow-lite/maintainability)  [![Coverage Status](https://coveralls.io/repos/github/ringtho/stackoverflow-lite/badge.svg?branch=api)](https://coveralls.io/github/ringtho/stackoverflow-lite?branch=api) 
 
 
@@ -65,12 +64,10 @@ $ pip install -r requirements.txt
 ```
 $ python app.py
 ```
-Use the link below to fork the app on postman.
+* Use the link below to fork the app on postman.
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/6160484-8d07d5c1-730d-4786-b12f-ace574dfea7d?action=collection%2Ffork&collection-url=entityId%3D6160484-8d07d5c1-730d-4786-b12f-ace574dfea7d%26entityType%3Dcollection%26workspaceId%3Db626a45c-b310-423e-9f53-cc578f23bb7d)
 
 ## Contributors
 * Ringtho Smith - *sringtho@gmail.com*
-=======
-The main app and UI pages will be pushed to this branch...
->>>>>>> develop
+
