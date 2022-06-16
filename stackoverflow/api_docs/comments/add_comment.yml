@@ -1,0 +1,41 @@
+summary : "Add a new Comment to an Answer"
+description : "This is a simple api to add a comment to an answer of a particular question"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+- in: "path"
+  name: "answer_id"
+  required: "true"
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of comment details"
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      comment:
+        type: "object"
+    example: {
+                "comment": "This really explains it all"
+              }
+tags: 
+- "comments"
+ 
+responses:
+  201:
+    description: "CREATED"
+
+  400:
+    description: "VALIDATION ERROR"
+
+  401:
+    description: "UNAUTHORIZED"
+
+  404:
+    description: "NOTFOUND"
+

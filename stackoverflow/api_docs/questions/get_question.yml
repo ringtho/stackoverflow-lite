@@ -1,0 +1,19 @@
+summary : "Return a Question"
+description : "This is a simple api to return a particular question by question id"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+tags: 
+- "questions"
+
+responses:
+  200:
+    description: "SUCCESS"
+
+  404:
+    description: "NOTFOUND"

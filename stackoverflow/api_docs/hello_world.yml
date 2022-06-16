@@ -1,0 +1,17 @@
+summary: "Hello World"
+description: "This api returns Hello World"
+produces:
+- "application/json"
+tags:
+- "hello world"
+
+responses:
+  200:
+    description: "SUCCESS"
+    schema:
+      type: "object"
+      properties:
+        message:
+          type: "string"
+
+

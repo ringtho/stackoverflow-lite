@@ -1,0 +1,22 @@
+summary : "Delete a Question"
+description : "This is a simple api to delete a question"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+tags: 
+- "questions"
+
+responses:
+  200:
+    description: "SUCCESS"
+
+  404:
+    description: "NOTFOUND"
+
+  401:
+    description: "UNAUTHORIZED"

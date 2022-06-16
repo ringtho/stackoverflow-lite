@@ -1,0 +1,43 @@
+summary : "Update a Comment"
+description : "This is a simple api to update a comment"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+- in: "path"
+  name: "answer_id"
+  required: "true"
+- in: "path"
+  name: "comment_id"
+  required: "true"
+- in: "body"
+  name: "body"
+  description: "Accepts a input dictionary of comment details"
+  required: "true"
+  schema:
+    type: "object"
+    properties:
+      comment:
+        type: "object"
+    example: {
+                "comment": "Thanks for this answer"
+              }
+tags: 
+- "comments"
+ 
+responses:
+  200:
+    description: "SUCCESS"
+
+  400:
+    description: "VALIDATION ERROR"
+
+  404:
+    description: "NOTFOUND"
+
+  401:
+    description: "UNAUTHORIZED"

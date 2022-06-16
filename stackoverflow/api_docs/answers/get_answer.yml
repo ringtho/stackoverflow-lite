@@ -1,0 +1,22 @@
+summary : "Return an Answer"
+description : "This is a simple api to return a particular answer to a question"
+produces : 
+- "application/json"
+consumes : 
+- "application/json"
+parameters :
+- in: "path"
+  name: "id"
+  required: "true"
+- in: "path"
+  name: "answer_id"
+  required: "true"
+tags: 
+- "answers"
+
+responses:
+  200:
+    description: "SUCCESS"
+
+  404:
+    description: "NOTFOUND"
