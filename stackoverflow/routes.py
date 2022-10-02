@@ -10,9 +10,11 @@ from stackoverflow.models.comment import Comment
 from stackoverflow.api_docs.swagger_template import SWAGGER_TEMPLATE
 from flasgger import Swagger
 from flasgger.utils import swag_from
+from flask_cors import CORS
 
 app = Flask(__name__)
 swagger = Swagger(app, template=SWAGGER_TEMPLATE)
+CORS(app)
 
 @app.route('/')
 @swag_from('api_docs/hello_world.yml')
